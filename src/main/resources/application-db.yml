@@ -1,5 +1,5 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/energiologydb?characterEncoding=utf8
+    url: jdbc:mysql://energiology-db.crg0yqic8dx6.ap-northeast-2.rds.amazonaws.com/test
     username: root
-    password: root
+    password: capstone7!!
