@@ -1,4 +1,4 @@
-package com.example.backendmainserver.user.application.dto.request;
+package com.example.backendmainserver.domain.user.application.dto.request;
 
 import lombok.Builder;
 

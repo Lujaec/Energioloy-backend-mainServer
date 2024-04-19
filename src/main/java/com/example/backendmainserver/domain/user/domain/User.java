@@ -1,4 +1,4 @@
-package com.example.backendmainserver.user.domain;
+package com.example.backendmainserver.domain.user.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -16,7 +16,7 @@ public class User {
     private Long id;
 
     @Column(unique = true)
-    private String login_id;
+    private String loginId;
 
     private String password;
 
