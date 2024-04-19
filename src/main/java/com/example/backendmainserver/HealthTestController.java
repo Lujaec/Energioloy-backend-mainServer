@@ -19,9 +19,4 @@ public class HealthTestController {
         return "energiology!";
     }
 
-    @GetMapping("/logintest")
-    public String loginTest() {
-        log.info("logintest!!");
-        return "login security!";
-    }
 }
