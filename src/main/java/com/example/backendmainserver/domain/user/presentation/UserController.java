@@ -5,9 +5,12 @@ import com.example.backendmainserver.domain.user.application.dto.request.JoinReq
 import com.example.backendmainserver.domain.user.application.dto.request.LoginRequest;
 import com.example.backendmainserver.domain.user.application.dto.response.JoinResponse;
 import com.example.backendmainserver.domain.user.application.dto.response.LoginResponse;
+import com.example.backendmainserver.global.response.SuccessCode;
+import com.example.backendmainserver.global.response.SuccessResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "유저 API", description = "유저 API입니다.")
@@ -19,13 +22,13 @@ public class UserController {
 
     @Operation(summary = "회원가입 api")
     @PostMapping("")
-    public JoinResponse join(@RequestBody JoinRequest req) {
-        return userService.join(req);
+    public ResponseEntity<SuccessResponse<JoinResponse>> join(@RequestBody JoinRequest req) {
+        return SuccessResponse.of(SuccessCode.USER_CREATED, userService.join(req));
     }
 
     @Operation(summary = "로그인 api")
     @PostMapping("/login")
-    public LoginResponse login(@RequestBody LoginRequest req) {
-        return userService.login(req);
+    public ResponseEntity<SuccessResponse<LoginResponse>> login(@RequestBody LoginRequest req) {
+        return SuccessResponse.of(SuccessCode.OK, userService.login((req)));
     }
 }

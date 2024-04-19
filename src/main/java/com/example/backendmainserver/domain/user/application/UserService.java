@@ -42,7 +42,7 @@ public class UserService  {
             throw new IllegalStateException("비번틀림");
         }
 //
-
+        System.out.println("됏자나");
             return LoginResponse.builder()
                     .userId(user.getId())
                     .build();
