@@ -18,4 +18,10 @@ public class HealthTestController {
         log.info("health req!!");
         return "energiology!";
     }
+
+    @GetMapping("/logintest")
+    public String loginTest() {
+        log.info("logintest!!");
+        return "login security!";
+    }
 }
