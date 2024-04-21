@@ -6,6 +6,8 @@ import com.example.backendmainserver.domain.user.application.dto.response.JoinRe
 import com.example.backendmainserver.domain.user.application.dto.response.LoginResponse;
 import com.example.backendmainserver.domain.user.domain.User;
 import com.example.backendmainserver.domain.user.domain.UserRepository;
+import com.example.backendmainserver.global.exception.DuplicateUserException;
+import com.example.backendmainserver.global.response.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -20,6 +22,10 @@ public class UserService  {
     private final PasswordEncoder passwordEncoder;
 
     public JoinResponse join(JoinRequest req) {
+        if (userRepository.findByLoginId(req.loginId()).isPresent()) {
+                throw new DuplicateUserException(ErrorCode.DUPLICATE_USER_NAME);
+    //            throw new IllegalStateException("이미 존재하는 회원입니다!");
+        }
         User user = User.builder()
                 .loginId(req.loginId())
                 .password(passwordEncoder.encode(req.password()))
