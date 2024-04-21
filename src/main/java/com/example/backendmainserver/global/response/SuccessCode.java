@@ -10,19 +10,17 @@ public enum SuccessCode {
     /**
      * 200 OK
      */
-    OK(HttpStatus.OK, "요청이 성공했습니다."),
+    OK(200,HttpStatus.OK, "요청이 성공했습니다."),
 
     /**
      * 201 CREATED SUCCESS
      */
-    CREATED(HttpStatus.CREATED, "생성 요청이 성공했습니다."),
-    USER_CREATED(HttpStatus.CREATED, "유저 회원가입이 성공했습니다."),
-    TEAM_CREATED(HttpStatus.CREATED, "팀 등록에 성공했습니다.");
+    CREATED(201, HttpStatus.CREATED, "생성 요청이 성공했습니다."),
+    USER_CREATED(201, HttpStatus.CREATED, "유저 회원가입이 성공했습니다."),
+    TEAM_CREATED(201, HttpStatus.CREATED, "팀 등록에 성공했습니다.");
 
+    private final int statusCode;
     private final HttpStatus status;
     private final String message;
 
-    public int getStatusCode() {
-        return status.value();
-    }
 }

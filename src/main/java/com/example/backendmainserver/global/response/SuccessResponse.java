@@ -19,7 +19,6 @@ public class SuccessResponse<T> {
     }
 
     public static <T> ResponseEntity<SuccessResponse<T>> of(SuccessCode success, T data) {
-        +
         return ResponseEntity.status(success.getStatus())
                 .body(new SuccessResponse<T>(success.getStatusCode(), success.getMessage(), data)); //<T>
     }
