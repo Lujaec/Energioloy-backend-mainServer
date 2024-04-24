@@ -15,8 +15,7 @@ public class HealthTestController {
     @Operation(summary = "Health Check API", description = "Health Check Api입니다.")
     @GetMapping("")
     public String apiHealthTest() {
-        log.info("health req!!");
-        return "energiology!";
+        return "energiology! v2";
     }
 
 }
