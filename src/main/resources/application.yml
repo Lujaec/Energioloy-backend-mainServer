@@ -2,9 +2,9 @@ spring:
   application:
     name: backend-mainServer
   datasource:
-    url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_DATABASE}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    url: jdbc:mysql://energiology-db.crg0yqic8dx6.ap-northeast-2.rds.amazonaws.com:3306/prod
+    username: root
+    password: capstone7!!
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
@@ -15,5 +15,19 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
 
-
-
+#spring:
+#  application:
+#    name: backend-mainServer
+#  datasource:
+#    url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_DATABASE}
+#    username: ${DB_USERNAME}
+#    password: ${DB_PASSWORD}
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#
+#  jpa:
+#    show-sql: true
+#    hibernate:
+#      ddl-auto: create
+#    properties:
+#      hibernate:
+#         dialect: org.hibernate.dialect.MySQLDialect

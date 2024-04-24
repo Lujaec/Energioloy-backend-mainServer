@@ -52,6 +52,12 @@ jobs:
             echo "DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}" >> ./.env
             echo "DOCKER_IMAGE=${{ secrets.DOCKER_IMAGE }}" >> ./.env
 
+      - name: 🐧application.yml 파일을 생성 합니다.
+        run: |
+          cd ./src/main/resources
+          touch ./application.yml
+          echo "${{ secrets.PROPERTIES }}" > ./application.yml
+        shell: bash
 
       - name: 🐧gradle build를 위한 권한을 부여합니다.
         run: chmod +x gradlew
