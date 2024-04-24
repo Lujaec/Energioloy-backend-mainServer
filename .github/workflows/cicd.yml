@@ -78,9 +78,8 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           host: ${{ secrets.EC2_HOST }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
-          envs: GITHUB_SHA
           source: "./.deploy/docker-compose.yml"
-          target: "/root"
+          target: "/home/ubuntu"
           strip_components: 2
 
       ## deploy to production
