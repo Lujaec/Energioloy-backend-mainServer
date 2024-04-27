@@ -1,0 +1,100 @@
+# cicd.yml
+# github repository Actions 페이지에 나타낼 이름
+name: Energiology CI/CD with Gradle
+
+# event trigger
+# main 브랜치에 push 했을 때 실행되는 트리거
+on:
+  push:
+    branches: [ "main" ]
+
+# permissions: write-all
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
+      - name: 🐧Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: 🐧Gradle Caching
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: 🐧Set ".env" for configuration at Server
+        uses: appleboy/ssh-action@master
+        with:
+          username: ${{ secrets.EC2_USERNAME }}
+          host: ${{ secrets.EC2_HOST }}
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
+          envs: GITHUB_SHA
+          script: |
+            rm -rf ./.env
+            touch ./.env
+            
+            echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> ./.env
+            echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> ./.env
+            echo "DB_HOST=${{ secrets.DB_HOST }}" >> ./.env
+            echo "DB_PORT=${{ secrets.DB_PORT }}" >> ./.env
+            echo "DB_DATABASE=${{ secrets.DB_DATABASE }}" >> ./.env
+            echo "DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}" >> ./.env
+            echo "DOCKER_IMAGE=${{ secrets.DOCKER_IMAGE }}" >> ./.env
+
+      - name: 🐧application.yml 파일을 생성 합니다.
+        run: |
+          cd ./src/main/resources
+          touch ./application.yml
+          echo "${{ secrets.PROPERTIES }}" > ./application.yml
+        shell: bash
+
+      - name: 🐧gradle build를 위한 권한을 부여합니다.
+        run: chmod +x gradlew
+
+      - name: 🐧gradle build 중입니다.
+        run: ./gradlew build
+        shell: bash # ci는 여기까지
+
+      - name: 🐧Docker 이미지를 빌드합니다.
+        run: docker build -f ./.deploy/Dockerfile -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_IMAGE }} .
+
+      - name: 🐧Docker Hub 로그인합니다.
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: 🐧Docker Hub에 push합니다.
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_IMAGE }}
+
+      - name: 🐧 docker-compose.yml을 서버에 옮깁니다.
+        uses: appleboy/scp-action@master
+        with:
+          username: ${{ secrets.EC2_USERNAME }}
+          host: ${{ secrets.EC2_HOST }}
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
+          source: "./.deploy/docker-compose.yml"
+          target: "/home/ubuntu"
+          strip_components: 2
+
+      ## deploy to production
+      - name: 🐧Docker hub에서 pull 후 deploy합니다.
+        uses: appleboy/ssh-action@master
+        with:
+          username: ${{ secrets.EC2_USERNAME }}
+          host: ${{ secrets.EC2_HOST }}
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
+          script: |
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_IMAGE }}
+            sudo docker rm -f $(docker ps -qa) 
+            docker compose up -d
+            docker image prune -f

@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("api/health")
 @Slf4j
 public class HealthTestController {
-    @Operation(summary = "Health Check API", description = "Health Check API입니다.")
+    @Operation(summary = "Health Check API", description = "Health Check Api입니다.")
     @GetMapping("")
     public String apiHealthTest() {
-        log.info("health req!!");
-        return "energiology!";
+        return "energiology! v3";
     }
+
 }
