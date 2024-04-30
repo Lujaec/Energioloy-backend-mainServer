@@ -1,4 +1,4 @@
-package com.example.backendmainserver.websocket.presentation.dto;
+package com.example.backendmainserver.PowerData.domain;
 
 import lombok.Getter;
 import lombok.Setter;
