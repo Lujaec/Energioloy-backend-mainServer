@@ -9,14 +9,21 @@ import java.util.List;
 
 @Getter
 @Setter
-@Builder
 public class PowerDataList {
     private List<PowerData> powerDataList;
+
+    public PowerDataList() {
+    }
 
     @Override
     public String toString() {
         return "PowerDataList{" +
                 "powerDataList=" + powerDataList.toString() +
                 '}';
+    }
+
+    @Builder
+    public PowerDataList(List<PowerData> powerDataList) {
+        this.powerDataList = powerDataList;
     }
 }

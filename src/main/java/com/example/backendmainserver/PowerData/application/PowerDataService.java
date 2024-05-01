@@ -7,7 +7,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -23,5 +25,29 @@ public class PowerDataService {
                     powerDataRepository.save(portId,powerData);
                 }
         );
+    }
+
+    public void deleteDataBeforeTime(LocalDateTime time){
+        Map<Long, PowerDataList> store = powerDataRepository.getStore();
+
+        for (PowerDataList powerDataList : store.values()) {
+            List<PowerData> powerDataL = powerDataList.getPowerDataList();
+            int size = powerDataL.size();
+
+            for(int i = size - 1; i >= 0; --i){
+                PowerData powerData = powerDataL.get(i);
+
+                Long portId = powerData.getPortId();
+                LocalDateTime measurementTime = powerData.getTime();
+
+                if(measurementTime.isBefore(time)){
+                    powerDataRepository.delete(portId, i);
+                }
+            }
+        }
+    }
+
+    public Map<Long, PowerDataList> getStore(){
+        return powerDataRepository.getStore();
     }
 }

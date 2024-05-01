@@ -27,4 +27,9 @@ public class InMemoryPowerDataRepository {
         PowerDataList powerDataList = store.get(portId);
         powerDataList.getPowerDataList().add(powerData);
     }
+
+    public void delete(Long portId, int idx){
+        PowerDataList powerDataList = store.get(portId);
+        powerDataList.getPowerDataList().remove(idx);
+    }
 }
