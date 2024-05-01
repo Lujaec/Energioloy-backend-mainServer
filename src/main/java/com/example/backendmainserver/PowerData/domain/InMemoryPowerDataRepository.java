@@ -7,11 +7,12 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Repository
 @Getter
 public class InMemoryPowerDataRepository {
-    Map<Long, PowerDataList> store = new HashMap<>();
+    Map<Long, PowerDataList> store = new ConcurrentHashMap<>();
 
     @PostConstruct
     void initStore(){
