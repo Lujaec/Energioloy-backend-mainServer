@@ -7,8 +7,12 @@ import com.example.backendmainserver.domain.user.application.dto.response.LoginR
 import com.example.backendmainserver.domain.user.domain.User;
 import com.example.backendmainserver.domain.user.domain.UserRepository;
 import com.example.backendmainserver.global.exception.DuplicateUserException;
+import com.example.backendmainserver.global.exception.GlobalException;
 import com.example.backendmainserver.global.response.ErrorCode;
+import com.example.backendmainserver.global.security.dto.UserDetailsImpl;
+import com.example.backendmainserver.global.security.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -16,9 +20,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class UserService  {
     private final UserRepository userRepository;
+    private final JwtProvider jwtProvider;
     private final PasswordEncoder passwordEncoder;
 
     public JoinResponse join(JoinRequest req) {
@@ -41,15 +47,26 @@ public class UserService  {
 
     public LoginResponse login(LoginRequest req) {
 
-
+        System.out.println(req.loginId());
+        System.out.println(req.password());
         User user = userRepository.findByLoginId(req.loginId())
-                .orElseThrow(() -> new IllegalStateException("유저업슴"));
+                .orElseThrow(() -> new GlobalException(ErrorCode.USER_NOT_FOUND));
         if (passwordEncoder.matches(req.password(), user.getPassword())==false) {
-            throw new IllegalStateException("비번틀림");
+            throw new GlobalException(ErrorCode.WRONG_USER_PASSWORD);
         }
-//
+
+        log.info("로그인 1차 성공");
+        UserDetailsImpl userDetail = UserDetailsImpl.fromMember(user);
+
+        String newAccessToken = jwtProvider.createAccessToken(userDetail);
+        String newRefreshToken = jwtProvider.createRefreshToken(userDetail);
+        log.info("at" + newAccessToken);
+
             return LoginResponse.builder()
                     .userId(user.getId())
+                    .accessToken(newAccessToken)
+                    .refreshToken(newRefreshToken)
+                    .nickname(user.getNickname())
                     .build();
 
     }

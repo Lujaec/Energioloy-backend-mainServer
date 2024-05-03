@@ -22,9 +22,11 @@ public enum ErrorCode {
     INVALID_JWT_REFRESH_TOKEN(401,HttpStatus.UNAUTHORIZED,  "유효하지 않은 REFRESH TOKEN 입니다."),
     EXPIRED_JWT_REFRESH_TOKEN(401,HttpStatus.UNAUTHORIZED, "REFRESH TOKEN이 만료되었습니다. 다시 로그인해주세요"),
 
+
     /**
      *  403 Forbidden
      */
+    WRONG_USER_ACCESS(403,HttpStatus.FORBIDDEN, "잘못된 접근 권한의 유저입니다."),
     WRONG_USER_PASSWORD(403,HttpStatus.FORBIDDEN, "입력하신 비밀번호가 올바르지 않습니다."),
     USER_NOT_HAVE_ENOUGH_TICKET(403,HttpStatus.FORBIDDEN, "보유한 티켓의 수가 부족합니다. 티켓을 충전해주세요."),
     USER_NOT_TEAMLEADER(403,HttpStatus.FORBIDDEN, "해당 명령을 실행할 수 없습니다. 팀 리더가 아닙니다."),
