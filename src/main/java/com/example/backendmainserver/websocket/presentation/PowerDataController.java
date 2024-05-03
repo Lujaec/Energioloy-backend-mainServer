@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
 import java.util.Map;
@@ -19,14 +19,15 @@ import java.util.Map;
 public class PowerDataController {
     private final PowerDataService powerDataService;
     private final InMemoryPowerDataRepository powerDataRepository;
+    private final SimpMessagingTemplate simpMessagingTemplate;
 
     @MessageMapping("/data")
-    @SendTo("/exe-command/data")
     public String receivePowerData(@Payload PowerDataList data) throws Exception {
         powerDataService.storeData(data);
 
         log.info(data.toString());
 
+//        simpMessagingTemplate.convertAndSend();
         return "from main server !! received: " + data;
     }
 }

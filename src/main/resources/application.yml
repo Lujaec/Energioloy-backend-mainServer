@@ -2,9 +2,9 @@ spring:
   application:
     name: backend-mainServer
   datasource:
-    url: jdbc:mysql://energiology-db.crg0yqic8dx6.ap-northeast-2.rds.amazonaws.com:3306/prod
+    url: jdbc:mysql://energiology-db.crg0yqic8dx6.ap-northeast-2.rds.amazonaws.com:3306/dev
     username: root
-    password: capstone7!!
+    password: capstoneaplus!!
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
@@ -14,6 +14,24 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+# 쿼리문 파라미터 바인딩 값 확인
+logging:
+  level:
+    org:
+      hibernate:
+        type:
+          descriptor:
+            sql: trace
+jwt:
+  secret-key: energiologyenergiologyenergiologyenergiologyenergiologyenergiologyenergiology
+  access-expiration-seconds: 60
+  refresh-expiration-seconds: 100
 
 #spring:
 #  application:
