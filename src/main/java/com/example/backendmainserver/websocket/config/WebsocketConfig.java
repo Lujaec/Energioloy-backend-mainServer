@@ -1,6 +1,9 @@
 package com.example.backendmainserver.websocket.config;
 
+import com.example.backendmainserver.websocket.presentation.AuthenticationInterceptor;
 import com.example.backendmainserver.websocket.presentation.MesesageMappingInterceptor;
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.server.ServerHttpRequest;
@@ -18,6 +21,7 @@ import java.util.Map;
 
 @Configuration
 @EnableWebSocketMessageBroker
+@RequiredArgsConstructor
 @Slf4j
 public class WebsocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
@@ -55,13 +59,6 @@ public class WebsocketConfig implements WebSocketMessageBrokerConfigurer {
         registry.addEndpoint("/client")
                 .setAllowedOrigins("*")
                 .withSockJS()
-                .setInterceptors(new HttpSessionHandshakeInterceptor() {
-                    @Override
-                    public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
-                        attributes.put("endpoint", "/client");
-                        return true;
-                    }
-                });
-        ;
+                .setInterceptors(new AuthenticationInterceptor());
     }
 }
