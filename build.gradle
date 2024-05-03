@@ -21,12 +21,33 @@ repositories {
 	mavenCentral()
 }
 
+
+//openFeign
+ext {
+	set('springCloudVersion', "2023.0.0")
+}
+//openFeign
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+	}
+}
+
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
 	implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.1.1'
+
+	//security
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	testImplementation 'org.springframework.security:spring-security-test'
+	implementation "io.jsonwebtoken:jjwt-api:0.11.5"
+	implementation "io.jsonwebtoken:jjwt-impl:0.11.5"
+	implementation "io.jsonwebtoken:jjwt-jackson:0.11.5"
+
+	//DB
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
 	// lombok
 	compileOnly 'org.projectlombok:lombok'
@@ -43,6 +64,9 @@ dependencies {
 
 	//websocket
 	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-websocket', version: '3.2.1'
+
+	// open feign
+	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 }
 
 tasks.named('test') {
