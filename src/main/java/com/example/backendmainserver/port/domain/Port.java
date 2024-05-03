@@ -1,5 +1,6 @@
 package com.example.backendmainserver.port.domain;
 
+import com.example.backendmainserver.room.domain.Room;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -14,4 +15,8 @@ public class Port {
     private Long minimumOutput;
 
     private Long maximumOutput;
+
+    @ManyToOne
+    @JoinColumn(name = "room_id")
+    private Room room;
 }
