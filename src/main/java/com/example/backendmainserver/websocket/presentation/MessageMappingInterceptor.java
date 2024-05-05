@@ -11,10 +11,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class MesesageMappingInterceptor implements ChannelInterceptor {
+public class MessageMappingInterceptor implements ChannelInterceptor {
     Map<String, List<String>> messageMapper;
 
-    public MesesageMappingInterceptor() {
+    public MessageMappingInterceptor() {
         this.messageMapper = new ConcurrentHashMap<>();
 
         messageMapper.put("/raspberrypi-websocket", List.of("/main-server/data"));
