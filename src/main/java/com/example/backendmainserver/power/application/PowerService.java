@@ -5,7 +5,9 @@ import com.example.backendmainserver.PowerData.domain.PowerData;
 import com.example.backendmainserver.PowerData.domain.PowerDataList;
 import com.example.backendmainserver.power.domain.Power;
 import com.example.backendmainserver.power.domain.PowerRepository;
+import com.example.backendmainserver.power.domain.dto.response.DailyPowerPredictionResponse;
 import com.example.backendmainserver.power.domain.dto.response.DailyPowerUsageResponse;
+import com.example.backendmainserver.power.domain.dto.response.MonthlyPowerPredictionResponse;
 import com.example.backendmainserver.power.domain.dto.response.MonthlyPowerUsageResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -102,7 +105,7 @@ public class PowerService {
     }
 
     /**
-     * 이번 달 전력 사용량, 예측량 데이터 조회 로직
+     * 이번 달 전력 사용량, 요금 조회 로직
      * @return
      */
     public MonthlyPowerUsageResponse getMonthlyPowerUsage() {
@@ -110,8 +113,7 @@ public class PowerService {
 
         Double sumPowerUsage = 0.0;
         Double sumPowerCost = 0.0;
-        Double sumPowerPredictionUsage= 0.0;
-        Double sumPowerPredictionCost = 0.0;
+
 
         for (Power power : currentMonthPower){
             if (power.getPowerUsage() != null) {
@@ -120,6 +122,26 @@ public class PowerService {
             if (power.getPowerCost() != null) {
                 sumPowerCost += power.getPowerCost();
             }
+
+        }
+
+        return MonthlyPowerUsageResponse.builder()
+                .powerCost(sumPowerCost)
+                .powerUsage(sumPowerUsage)
+                .build();
+    }
+
+    /**
+     * 이번 달 전력 예측량, 요금 데이터 조회 로직
+     * @return
+     */
+    public MonthlyPowerPredictionResponse getMonthlyPowerPrediction() {
+        List<Power> currentMonthPower = powerRepository.findCurrentMonthPower();
+
+        Double sumPowerPredictionUsage= 0.0;
+        Double sumPowerPredictionCost = 0.0;
+
+        for (Power power : currentMonthPower){
             if (power.getPowerPredictionUsage() != null) {
                 sumPowerPredictionUsage += power.getPowerPredictionUsage();
             }
@@ -128,9 +150,7 @@ public class PowerService {
             }
         }
 
-        return MonthlyPowerUsageResponse.builder()
-                .powerCost(sumPowerCost)
-                .powerUsage(sumPowerUsage)
+        return MonthlyPowerPredictionResponse.builder()
                 .powerPredictionUsage(sumPowerPredictionUsage)
                 .powerPredictionCost(sumPowerPredictionCost)
                 .build();
@@ -142,19 +162,17 @@ public class PowerService {
      */
     public DailyPowerUsageResponse getDailyPowerUsage() {
         List<Power> currentDailyPower = powerRepository.findTodayPower();
+        List<Double> powerUsageList = new ArrayList<>() ;
 
         double sumPowerUsage = 0.0;
-        double sumPowerPredictionUsage= 0.0;
         double externalRatio = 100.0;
         int batteryCount = 0;
         int externalCount = 0;
 
         for (Power power : currentDailyPower) {
+            powerUsageList.add(power.getPowerUsage());
             if (power.getPowerUsage() != null) {
                 sumPowerUsage += power.getPowerUsage();
-            }
-            if (power.getPowerPredictionUsage() != null) {
-                sumPowerPredictionUsage += power.getPowerPredictionUsage();
             }
             if (power.getPowerSupplier() != null) {
                 if (power.getPowerSupplier().equals("battery")) {
@@ -171,9 +189,32 @@ public class PowerService {
 
         return DailyPowerUsageResponse.builder()
                 .powerUsage(sumPowerUsage)
-                .powerPredictionUsage(sumPowerPredictionUsage)
+                .powerUsageDataList(powerUsageList)
                 .powerSupplierRatio(externalRatio)
                 .build();
     }
 
+    /**
+     * 오늘 예측량 데이터 조회 로직
+     * @return
+     */
+    public DailyPowerPredictionResponse getDailyPowerPrediction() {
+        List<Power> currentDailyPower = powerRepository.findTodayPower();
+        List<Double> powerPredictionList = new ArrayList<>();
+
+
+        double sumPowerPredictionUsage= 0.0;
+
+        for (Power power : currentDailyPower) {
+            powerPredictionList.add(power.getPowerPredictionUsage());
+            if (power.getPowerPredictionUsage() != null) {
+                sumPowerPredictionUsage += power.getPowerPredictionUsage();
+            }
+        }
+
+        return DailyPowerPredictionResponse.builder()
+                .powerPredictionUsage(sumPowerPredictionUsage)
+                .powerPredictionDataList(powerPredictionList)
+                .build();
+    }
 }
