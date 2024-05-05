@@ -2,6 +2,7 @@ package com.example.backendmainserver.websocket.config;
 
 import com.example.backendmainserver.websocket.application.WebSocketSessionService;
 import com.example.backendmainserver.websocket.presentation.AuthenticationInterceptor;
+import com.example.backendmainserver.websocket.presentation.HandShakeAuthorizationInterceptor;
 import com.example.backendmainserver.websocket.presentation.MessageMappingInterceptor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,8 +30,9 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Slf4j
 public class WebsocketConfig implements WebSocketMessageBrokerConfigurer {
-    private final AuthenticationInterceptor authenticationInterceptor;
+//    private final AuthenticationInterceptor authenticationInterceptor;
     private final WebSocketSessionService webSocketSessionService;
+    private final HandShakeAuthorizationInterceptor handShakeAuthorizationInterceptor;
 
     @Override
     public void configureClientInboundChannel(ChannelRegistration registration) {
@@ -68,7 +70,7 @@ public class WebsocketConfig implements WebSocketMessageBrokerConfigurer {
         registry.addEndpoint("/client")
                 .setAllowedOriginPatterns("*")
                 .withSockJS()
-                .setInterceptors(authenticationInterceptor);
+                .setInterceptors(handShakeAuthorizationInterceptor);
     }
 
     @Override
@@ -83,7 +85,7 @@ public class WebsocketConfig implements WebSocketMessageBrokerConfigurer {
                         String endpoint = (String) attributes.get("endpoint");
 
                         if(endpoint.equals("/client")){
-                            Long userId = Long.parseLong((String) attributes.get("userId"));
+                            Long userId = Long.valueOf((Integer) attributes.get("userId"));
                             webSocketSessionService.save(session, userId);
                         }
 
