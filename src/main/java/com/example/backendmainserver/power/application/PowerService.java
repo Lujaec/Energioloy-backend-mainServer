@@ -114,10 +114,18 @@ public class PowerService {
         Double sumPowerPredictionCost = 0.0;
 
         for (Power power : currentMonthPower){
-            sumPowerUsage += power.getPowerUsage();
-            sumPowerCost += power.getPowerCost();
-            sumPowerPredictionUsage += power.getPowerPredictionUsage();
-            sumPowerPredictionCost += power.getPowerPredictionCost();
+            if (power.getPowerUsage() != null) {
+                sumPowerUsage += power.getPowerUsage();
+            }
+            if (power.getPowerCost() != null) {
+                sumPowerCost += power.getPowerCost();
+            }
+            if (power.getPowerPredictionUsage() != null) {
+                sumPowerPredictionUsage += power.getPowerPredictionUsage();
+            }
+            if (power.getPowerPredictionCost() != null) {
+                sumPowerPredictionCost += power.getPowerPredictionCost();
+            }
         }
 
         return MonthlyPowerUsageResponse.builder()
@@ -135,28 +143,36 @@ public class PowerService {
     public DailyPowerUsageResponse getDailyPowerUsage() {
         List<Power> currentDailyPower = powerRepository.findTodayPower();
 
-        Double sumPowerUsage = 0.0;
-        Double sumPowerPredictionUsage= 0.0;
+        double sumPowerUsage = 0.0;
+        double sumPowerPredictionUsage= 0.0;
+        double externalRatio = 100.0;
         int batteryCount = 0;
         int externalCount = 0;
 
-        for (Power power : currentDailyPower){
-            sumPowerUsage += power.getPowerUsage();
-            sumPowerPredictionUsage += power.getPowerPredictionUsage();
-            if (power.getPowerSupplier().equals("battery")) {
-                batteryCount += 1;
-            } else if (power.getPowerSupplier().equals("external")) {
-                externalCount += 1;
+        for (Power power : currentDailyPower) {
+            if (power.getPowerUsage() != null) {
+                sumPowerUsage += power.getPowerUsage();
             }
-            else{
-                log.error("Battery or External이 아닌 공급원이 발견되었습니다.");
+            if (power.getPowerPredictionUsage() != null) {
+                sumPowerPredictionUsage += power.getPowerPredictionUsage();
             }
+            if (power.getPowerSupplier() != null) {
+                if (power.getPowerSupplier().equals("battery")) {
+                    batteryCount += 1;
+                } else if (power.getPowerSupplier().equals("external")) {
+                    externalCount += 1;
+                }
+
+            }
+        }
+        if( batteryCount + externalCount !=0){
+            externalRatio = (double) externalCount / (batteryCount + externalCount) * 100;
         }
 
         return DailyPowerUsageResponse.builder()
                 .powerUsage(sumPowerUsage)
                 .powerPredictionUsage(sumPowerPredictionUsage)
-                .powerSupplierRatio((double) externalCount / currentDailyPower.size() * 100)
+                .powerSupplierRatio(externalRatio)
                 .build();
     }
 
