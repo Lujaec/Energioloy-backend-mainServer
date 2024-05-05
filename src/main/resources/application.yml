@@ -30,8 +30,8 @@ logging:
             sql: trace
 jwt:
   secret-key: energiologyenergiologyenergiologyenergiologyenergiologyenergiologyenergiology
-  access-expiration-seconds: 60
-  refresh-expiration-seconds: 100
+  access-expiration-seconds: 600000000
+  refresh-expiration-seconds: 100000000
 
 #spring:
 #  application:
