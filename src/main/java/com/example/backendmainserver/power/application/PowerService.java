@@ -1,10 +1,10 @@
-package com.example.backendmainserver.powerMinute.application;
+package com.example.backendmainserver.power.application;
 
 import com.example.backendmainserver.PowerData.application.PowerDataService;
 import com.example.backendmainserver.PowerData.domain.PowerData;
 import com.example.backendmainserver.PowerData.domain.PowerDataList;
-import com.example.backendmainserver.powerMinute.domain.PowerPerMinute;
-import com.example.backendmainserver.powerMinute.domain.PowerPerMinuteRepository;
+import com.example.backendmainserver.power.domain.Power;
+import com.example.backendmainserver.power.domain.PowerRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -19,9 +19,9 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class PowerPerMinuteService {
+public class PowerService {
     private final PowerDataService powerDataService;
-    private final PowerPerMinuteRepository powerPerMinuteRepository;
+    private final PowerRepository powerRepository;
     private final int MAX_PORT_CNT = 5;
     @Scheduled(cron = "0 * * * * *")
     public void convertPowerPerMinute() {
@@ -40,7 +40,7 @@ public class PowerPerMinuteService {
             Long portId = i;
             String powerSupplier = calPowerSupplier(powerDataL);
 
-            PowerPerMinute powerPerMinute = PowerPerMinute.builder()
+            Power powerPerMinute = Power.builder()
                     .powerUsage(totalPower)
                     .powerSupplier(powerSupplier)
                     .portId(portId)
@@ -93,7 +93,7 @@ public class PowerPerMinuteService {
     }
 
     @Transactional
-    public PowerPerMinute save(PowerPerMinute powerPerMinute){
-        return powerPerMinuteRepository.save(powerPerMinute);
+    public Power save(Power powerPerMinute){
+        return powerRepository.save(powerPerMinute);
     }
 }

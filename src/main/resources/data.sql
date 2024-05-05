@@ -1,4 +1,4 @@
-INSERT INTO devjinwoo.power_per_minute (port_id, power_cost, power_prediction_cost, power_prediction_usage, power_usage, time, power_supplier)
+INSERT INTO devjinwoo.power (port_id, power_cost, power_prediction_cost, power_prediction_usage, power_usage, time, power_supplier)
 VALUES
     (1, 1 * 20.0, NULL, NULL, 1.0, '2024-04-25 10:56:00', 'external'),
     (2, 11 * 20.0, NULL, NULL, 11.0, '2024-04-25 10:56:00', 'external'),
