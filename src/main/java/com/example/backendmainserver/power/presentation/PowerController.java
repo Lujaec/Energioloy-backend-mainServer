@@ -2,6 +2,7 @@ package com.example.backendmainserver.power.presentation;
 
 import com.example.backendmainserver.global.response.SuccessResponse;
 import com.example.backendmainserver.power.application.PowerService;
+import com.example.backendmainserver.power.domain.dto.response.DailyPowerUsageResponse;
 import com.example.backendmainserver.power.domain.dto.response.MonthlyPowerUsageResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -19,9 +20,15 @@ import org.springframework.web.bind.annotation.RestController;
 public class PowerController {
     private final PowerService powerService;
 
-    @Operation(summary="전력 사용량 조회 api", description = "이번 달 사용한 전력량 및 요금을 조회하는 api입니다.")
+    @Operation(summary="이번달 전력 사용량, 예측량 조회 api", description = "이번 달 사용한 전력량 및 요금을 조회하는 api입니다.")
     @GetMapping("/usage/month")
     public ResponseEntity<SuccessResponse<MonthlyPowerUsageResponse>> getMonthlyPowerUsage() {
         return SuccessResponse.of(powerService.getMonthlyPowerUsage());
+    }
+
+    @Operation(summary="오늘 전력 사용량, 예측량, 공급원 비율 조회 api", description = "오늘 사용 전략량, 예측량, 비율조회하는 api입니다.")
+    @GetMapping("/usage/today")
+    public ResponseEntity<SuccessResponse<DailyPowerUsageResponse>> getDailyPowerUsage() {
+        return SuccessResponse.of(powerService.getDailyPowerUsage());
     }
 }

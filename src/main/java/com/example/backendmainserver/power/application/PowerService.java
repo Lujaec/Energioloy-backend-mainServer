@@ -5,6 +5,7 @@ import com.example.backendmainserver.PowerData.domain.PowerData;
 import com.example.backendmainserver.PowerData.domain.PowerDataList;
 import com.example.backendmainserver.power.domain.Power;
 import com.example.backendmainserver.power.domain.PowerRepository;
+import com.example.backendmainserver.power.domain.dto.response.DailyPowerUsageResponse;
 import com.example.backendmainserver.power.domain.dto.response.MonthlyPowerUsageResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,14 +42,16 @@ public class PowerService {
             Long portId = i;
             String powerSupplier = calPowerSupplier(powerDataL);
 
-            Power powerPerMinute = Power.builder()
-                    .powerUsage(totalPower)
-                    .powerSupplier(powerSupplier)
-                    .portId(portId)
-                    .time(convertedNow)
-                    .build();
+            Power existingPower = powerRepository.findByPortIdAndTime(portId, convertedNow)
+                    .orElseThrow(() -> new IllegalStateException("portId와 시간으로 Power row를 찾을 수없습니다"));
 
-            this.save(powerPerMinute);
+            existingPower.setPowerUsage(totalPower);
+            existingPower.setPowerSupplier(powerSupplier);
+            existingPower.setPowerCost(totalPower * 20); //임의의 가중치 20
+            powerRepository.save(existingPower);
+
+
+
         }
 
         powerDataService.deleteDataBeforeTime(convertedNow);
@@ -80,7 +83,7 @@ public class PowerService {
             supplierCnt.put(supplier, supplierCnt.getOrDefault(supplier, 0) + 1);
         }
 
-        String mostCommonSupplier = null;
+        String mostCommonSupplier = "external"; //기본값!
         int maxCount = 0;
 
         for (Map.Entry<String, Integer> entry : supplierCnt.entrySet()) {
@@ -99,28 +102,62 @@ public class PowerService {
     }
 
     /**
-     * 이번 달 전력 사용량 데이터 조회 로직
+     * 이번 달 전력 사용량, 예측량 데이터 조회 로직
      * @return
      */
     public MonthlyPowerUsageResponse getMonthlyPowerUsage() {
         List<Power> currentMonthPower = powerRepository.findCurrentMonthPower();
 
-        System.out.println(currentMonthPower.size());
-        for (Power power : currentMonthPower){
-            System.out.println(power.getTime().toString());
-        }
-
         Double sumPowerUsage = 0.0;
         Double sumPowerCost = 0.0;
+        Double sumPowerPredictionUsage= 0.0;
+        Double sumPowerPredictionCost = 0.0;
 
         for (Power power : currentMonthPower){
             sumPowerUsage += power.getPowerUsage();
             sumPowerCost += power.getPowerCost();
+            sumPowerPredictionUsage += power.getPowerPredictionUsage();
+            sumPowerPredictionCost += power.getPowerPredictionCost();
         }
 
         return MonthlyPowerUsageResponse.builder()
                 .powerCost(sumPowerCost)
                 .powerUsage(sumPowerUsage)
+                .powerPredictionUsage(sumPowerPredictionUsage)
+                .powerPredictionCost(sumPowerPredictionCost)
                 .build();
     }
+
+    /**
+     * 오늘 전력 사용량, 예측량 데이터 조회 로직
+     * @return
+     */
+    public DailyPowerUsageResponse getDailyPowerUsage() {
+        List<Power> currentDailyPower = powerRepository.findTodayPower();
+
+        Double sumPowerUsage = 0.0;
+        Double sumPowerPredictionUsage= 0.0;
+        int batteryCount = 0;
+        int externalCount = 0;
+
+        for (Power power : currentDailyPower){
+            sumPowerUsage += power.getPowerUsage();
+            sumPowerPredictionUsage += power.getPowerPredictionUsage();
+            if (power.getPowerSupplier().equals("battery")) {
+                batteryCount += 1;
+            } else if (power.getPowerSupplier().equals("external")) {
+                externalCount += 1;
+            }
+            else{
+                log.error("Battery or External이 아닌 공급원이 발견되었습니다.");
+            }
+        }
+
+        return DailyPowerUsageResponse.builder()
+                .powerUsage(sumPowerUsage)
+                .powerPredictionUsage(sumPowerPredictionUsage)
+                .powerSupplierRatio((double) externalCount / currentDailyPower.size() * 100)
+                .build();
+    }
+
 }

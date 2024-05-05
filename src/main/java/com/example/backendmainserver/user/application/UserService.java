@@ -1,11 +1,11 @@
-package com.example.backendmainserver.domain.user.application;
+package com.example.backendmainserver.user.application;
 
-import com.example.backendmainserver.domain.user.application.dto.request.JoinRequest;
-import com.example.backendmainserver.domain.user.application.dto.request.LoginRequest;
-import com.example.backendmainserver.domain.user.application.dto.response.JoinResponse;
-import com.example.backendmainserver.domain.user.application.dto.response.LoginResponse;
-import com.example.backendmainserver.domain.user.domain.User;
-import com.example.backendmainserver.domain.user.domain.UserRepository;
+import com.example.backendmainserver.user.application.dto.request.JoinRequest;
+import com.example.backendmainserver.user.application.dto.request.LoginRequest;
+import com.example.backendmainserver.user.application.dto.response.JoinResponse;
+import com.example.backendmainserver.user.application.dto.response.LoginResponse;
+import com.example.backendmainserver.user.domain.User;
+import com.example.backendmainserver.user.domain.UserRepository;
 import com.example.backendmainserver.global.exception.DuplicateUserException;
 import com.example.backendmainserver.global.exception.GlobalException;
 import com.example.backendmainserver.global.response.ErrorCode;
@@ -13,9 +13,6 @@ import com.example.backendmainserver.global.security.dto.UserDetailsImpl;
 import com.example.backendmainserver.global.security.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 

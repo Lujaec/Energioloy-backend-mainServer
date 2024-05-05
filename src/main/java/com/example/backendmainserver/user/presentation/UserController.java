@@ -1,10 +1,10 @@
-package com.example.backendmainserver.domain.user.presentation;
+package com.example.backendmainserver.user.presentation;
 
-import com.example.backendmainserver.domain.user.application.UserService;
-import com.example.backendmainserver.domain.user.application.dto.request.JoinRequest;
-import com.example.backendmainserver.domain.user.application.dto.request.LoginRequest;
-import com.example.backendmainserver.domain.user.application.dto.response.JoinResponse;
-import com.example.backendmainserver.domain.user.application.dto.response.LoginResponse;
+import com.example.backendmainserver.user.application.UserService;
+import com.example.backendmainserver.user.application.dto.request.JoinRequest;
+import com.example.backendmainserver.user.application.dto.request.LoginRequest;
+import com.example.backendmainserver.user.application.dto.response.JoinResponse;
+import com.example.backendmainserver.user.application.dto.response.LoginResponse;
 import com.example.backendmainserver.global.response.SuccessCode;
 import com.example.backendmainserver.global.response.SuccessResponse;
 import io.swagger.v3.oas.annotations.Operation;
