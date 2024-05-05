@@ -5,6 +5,7 @@ import com.example.backendmainserver.PowerData.domain.PowerData;
 import com.example.backendmainserver.PowerData.domain.PowerDataList;
 import com.example.backendmainserver.power.domain.Power;
 import com.example.backendmainserver.power.domain.PowerRepository;
+import com.example.backendmainserver.power.domain.dto.response.MonthlyPowerUsageResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -95,5 +96,31 @@ public class PowerService {
     @Transactional
     public Power save(Power powerPerMinute){
         return powerRepository.save(powerPerMinute);
+    }
+
+    /**
+     * 이번 달 전력 사용량 데이터 조회 로직
+     * @return
+     */
+    public MonthlyPowerUsageResponse getMonthlyPowerUsage() {
+        List<Power> currentMonthPower = powerRepository.findCurrentMonthPower();
+
+        System.out.println(currentMonthPower.size());
+        for (Power power : currentMonthPower){
+            System.out.println(power.getTime().toString());
+        }
+
+        Double sumPowerUsage = 0.0;
+        Double sumPowerCost = 0.0;
+
+        for (Power power : currentMonthPower){
+            sumPowerUsage += power.getPowerUsage();
+            sumPowerCost += power.getPowerCost();
+        }
+
+        return MonthlyPowerUsageResponse.builder()
+                .powerCost(sumPowerCost)
+                .powerUsage(sumPowerUsage)
+                .build();
     }
 }
