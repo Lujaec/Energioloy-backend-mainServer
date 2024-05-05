@@ -11,6 +11,8 @@ import com.example.backendmainserver.global.exception.GlobalException;
 import com.example.backendmainserver.global.response.ErrorCode;
 import com.example.backendmainserver.global.security.dto.UserDetailsImpl;
 import com.example.backendmainserver.global.security.jwt.JwtProvider;
+import com.example.backendmainserver.port.application.PortService;
+import com.example.backendmainserver.room.domain.Room;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,6 +21,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -26,6 +31,7 @@ public class UserService  {
     private final UserRepository userRepository;
     private final JwtProvider jwtProvider;
     private final PasswordEncoder passwordEncoder;
+    private final PortService portService;
 
     public JoinResponse join(JoinRequest req) {
         if (userRepository.findByLoginId(req.loginId()).isPresent()) {
@@ -69,6 +75,22 @@ public class UserService  {
                     .nickname(user.getNickname())
                     .build();
 
+    }
+
+    public User getUser(Long userId){
+        Optional<User> userOptional = userRepository.findById(userId);
+
+        if(userOptional.isEmpty())
+            throw new GlobalException(ErrorCode.USER_NOT_FOUND);
+
+        return userOptional.get();
+    }
+
+    public List<Long> getPortsId(Long userId){
+        User user = getUser(userId);
+        Room room = user.getRoom();
+
+        return portService.getPortsId(room);
     }
 
 //    @Override
