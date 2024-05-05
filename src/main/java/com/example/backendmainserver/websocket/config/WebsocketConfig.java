@@ -1,8 +1,8 @@
 package com.example.backendmainserver.websocket.config;
 
+import com.example.backendmainserver.websocket.application.WebSocketSessionService;
 import com.example.backendmainserver.websocket.presentation.AuthenticationInterceptor;
-import com.example.backendmainserver.websocket.presentation.MesesageMappingInterceptor;
-import jakarta.servlet.http.HttpServletRequest;
+import com.example.backendmainserver.websocket.presentation.MessageMappingInterceptor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
@@ -10,10 +10,15 @@ import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
+import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.WebSocketHandler;
+import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
+import org.springframework.web.socket.config.annotation.WebSocketTransportRegistration;
+import org.springframework.web.socket.handler.WebSocketHandlerDecorator;
+import org.springframework.web.socket.handler.WebSocketHandlerDecoratorFactory;
 import org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor;
 
 import java.util.Map;
@@ -24,9 +29,12 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Slf4j
 public class WebsocketConfig implements WebSocketMessageBrokerConfigurer {
+    private final AuthenticationInterceptor authenticationInterceptor;
+    private final WebSocketSessionService webSocketSessionService;
+
     @Override
     public void configureClientInboundChannel(ChannelRegistration registration) {
-        registration.interceptors(new MesesageMappingInterceptor());
+        registration.interceptors(new MessageMappingInterceptor());
     }
 
     @Override
@@ -44,8 +52,9 @@ public class WebsocketConfig implements WebSocketMessageBrokerConfigurer {
         // http://배포주소:8080/raspberrypi-websocket
 
         registry.addEndpoint("/raspberrypi-websocket")
-                .setAllowedOrigins("*")
+                .setAllowedOriginPatterns("*")
                 .withSockJS()
+                .setTransportHandlers()
                 .setInterceptors(new HttpSessionHandshakeInterceptor() {
                     @Override
                     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
@@ -57,8 +66,39 @@ public class WebsocketConfig implements WebSocketMessageBrokerConfigurer {
         // stomp 웹소켓 endpoint 설정
         // ws://localhost:8080/client
         registry.addEndpoint("/client")
-                .setAllowedOrigins("*")
+                .setAllowedOriginPatterns("*")
                 .withSockJS()
-                .setInterceptors(new AuthenticationInterceptor());
+                .setInterceptors(authenticationInterceptor);
+    }
+
+    @Override
+    public void configureWebSocketTransport(WebSocketTransportRegistration registration) {
+        registration.addDecoratorFactory(new WebSocketHandlerDecoratorFactory() {
+            @Override
+            public WebSocketHandler decorate(WebSocketHandler handler) {
+                return new WebSocketHandlerDecorator(handler) {
+                    @Override
+                    public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+                        Map<String, Object> attributes = session.getAttributes();
+                        String endpoint = (String) attributes.get("endpoint");
+
+                        if(endpoint.equals("/client")){
+                            Long userId = Long.parseLong((String) attributes.get("userId"));
+                            webSocketSessionService.save(session, userId);
+                        }
+
+                        super.afterConnectionEstablished(session);
+                    }
+
+                    @Override
+                    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
+                        log.info("WebSocket connection closed. Session ID: " + session.getId());
+
+                        webSocketSessionService.delete(session.getId());
+                        super.afterConnectionClosed(session, status);
+                    }
+                };
+            }
+        });
     }
 }
