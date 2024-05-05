@@ -4,6 +4,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -18,6 +19,7 @@ import java.io.IOException;
 /**
  * Jwt token을 authenticate하는 필터입니다.
  */
+@Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 
@@ -47,8 +49,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         // 다음 필터로 proceed
         filterChain.doFilter(request, response);
-
-
     }
 
 
@@ -59,5 +59,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return bearerToken.substring(AUTHENTICATION_SCHEME.length());  // 'Bearer ' prefix 제거
         }
         throw new PreAuthenticatedCredentialsNotFoundException("토큰이 존재하지 않습니다.");
+    }
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        log.info("shouldNotFilter: request uri: {}", request.getRequestURI() );
+
+        return org.apache.commons.lang3.StringUtils.startsWithAny(request.getRequestURI(),
+                "/api/health",
+                "/client/info",
+                "/client");
     }
 }
