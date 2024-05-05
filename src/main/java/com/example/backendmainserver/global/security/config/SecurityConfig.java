@@ -25,6 +25,8 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.springframework.http.HttpMethod.GET;
@@ -46,23 +48,23 @@ public class SecurityConfig {
     @Bean
     @Order(1) // 우선 순위 1
     public SecurityFilterChain authorizeFilterChain(HttpSecurity http) throws Exception {
-        httpSecuirtySetting(http);
 
         http
-                .securityMatchers(matcher -> matcher
-                        .requestMatchers(authorizeRequestMathcers()))
+//                .securityMatchers(matcher -> matcher
+//                        .requestMatchers(authorizeRequestMatchers())) // CORS 문제 생김
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(authorizeRequestMathcers())
-                        .authenticated() // 인증된 사용자만 허용
-//                            .hasAuthority(RolesType.ROLE_USER.name()) // 빌딩 관리자 - 사용자가 ROLE구분이 아닌
-                        .anyRequest().denyAll())
+                        .requestMatchers(authorizeRequestMatchers()).authenticated() // 인증된 사용자만 허용
+                        .requestMatchers(permitAllRequestMatchers()).permitAll() // 인증 필요 없는 경로
+                        .anyRequest().permitAll())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 // jwt 인증/인가 필터 추가
                 .addFilterBefore(
                         new JwtAuthenticationFilter(new ProviderManager(jwtAuthenticationProvider)),
                         UsernamePasswordAuthenticationFilter.class)
                 // jwt 인증/인가 필터에서 발생한 에러 handle 필터 추가
                 .addFilterBefore(new JwtAuthenticationHandlerFilter(), JwtAuthenticationFilter.class)
-                .exceptionHandling(handler -> handler.accessDeniedHandler(accessDeniedHandler));
+                .exceptionHandling(handler -> handler.accessDeniedHandler(accessDeniedHandler))
+                .csrf(AbstractHttpConfigurer::disable);
 
         return http.build();
     }
@@ -73,15 +75,13 @@ public class SecurityConfig {
     @Bean
     @Order(2) // 우선 순위 2
     public SecurityFilterChain permitAllFilterChain(HttpSecurity http) throws Exception {
-        httpSecuirtySetting(http);
-
         http
-                .securityMatchers(matcher -> matcher
-                        .requestMatchers(permitAllRequestMatchers()))
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(permitAllRequestMatchers()).permitAll()
                         .anyRequest().denyAll()
-                );
+                ).csrf(AbstractHttpConfigurer::disable)
+        ;
         return http.build();
     }
 
@@ -96,7 +96,7 @@ public class SecurityConfig {
     /**
      * authorize endpoint >> 인증/인가 필요한 endpoint
      */
-    private RequestMatcher[] authorizeRequestMathcers() {
+    private RequestMatcher[] authorizeRequestMatchers() {
         List<RequestMatcher> requestMatchers = List.of(
                 antMatcher(POST, "/member/refresh")
         );
@@ -109,8 +109,12 @@ public class SecurityConfig {
     private RequestMatcher[] permitAllRequestMatchers() {
         List<RequestMatcher> requestMatchers = List.of(
                 antMatcher(POST, "/api/user/login"),
-                antMatcher(POST, "/api/user")
+                antMatcher(POST, "/api/user"),
+                antMatcher(GET, "/api/health"),
+                antMatcher(GET, "/client/**"),
+                antMatcher(POST, "/client/**")
         );
+
         return requestMatchers.toArray(RequestMatcher[]::new);
     }
 
@@ -125,30 +129,31 @@ public class SecurityConfig {
         return requestMatchers.toArray(RequestMatcher[]::new);
     }
 
+    //    public CorsConfigurationSource corsConfigurationSource() {
+//        CorsConfiguration configuration = new CorsConfiguration();
+//        configuration.setAllowedOriginPatterns(List.of("http://localhost:3000")); // React 앱의 URL
+//        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+//        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
+//        configuration.setAllowCredentials(true);
+//
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("/**", configuration);
+//        return source;
+//    }
     @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-
-        configuration.setAllowedOrigins(
-                List.of("http://localhost:8080")
-        );
-
-        configuration.setAllowedMethods(
-                List.of("GET", "POST", "PUT", "PATCH", "DELETE")
-        );
-
-        configuration.addAllowedHeader("*"); // 모든 헤더 허용
-        configuration.setAllowCredentials(true);
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-
-        return source;
-
+    CorsConfigurationSource corsConfigurationSource() {
+        return request -> {
+            CorsConfiguration config = new CorsConfiguration();
+            config.setAllowedHeaders(Collections.singletonList("*"));
+            config.setAllowedMethods(Collections.singletonList("*"));
+            config.setAllowedOriginPatterns(Collections.singletonList("*")); // 허용할 origin
+            config.setAllowCredentials(true);
+            return config;
+        };
     }
 
-    private void httpSecuirtySetting(HttpSecurity http) throws Exception {
 
+    private void httpSecuirtySetting(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable) //jwt를 사용함으로 csrf 비활성
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) // cors 정책 반영
@@ -164,6 +169,8 @@ public class SecurityConfig {
     public PasswordEncoder getPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
+
 }
 
 
