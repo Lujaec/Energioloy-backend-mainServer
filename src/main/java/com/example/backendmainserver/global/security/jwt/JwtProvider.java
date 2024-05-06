@@ -1,22 +1,14 @@
 package com.example.backendmainserver.global.security.jwt;
 
-import com.example.backendmainserver.global.security.dto.UserDetailsImpl;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.time.Duration;
 import java.util.Date;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Component
 public class JwtProvider {
@@ -35,25 +27,16 @@ public class JwtProvider {
     /**
      * access token 생성
      */
-    public String createAccessToken(UserDetailsImpl userDetails) {
+    public String createAccessToken(Long userId) {
         Date now = new Date();
         Date expiration = new Date(now.getTime() + Duration.ofSeconds(accessExpirationSeconds).toMillis());
 
-        String authorities = "";
 
-        if (userDetails.getAuthorities() != null && !userDetails.getAuthorities().isEmpty()) {
-            authorities = userDetails.getAuthorities().stream()
-                    .map(GrantedAuthority::getAuthority)
-                    .collect(Collectors.joining(", "));
-        }
 
         return Jwts.builder()
-                .claim("memberId", userDetails.getMemberId())
-                .claim("name", userDetails.getName())
-                .setSubject(userDetails.getUsername())
+                .claim("memberId", userId)
                 .setIssuedAt(now)
                 .setExpiration(expiration)
-                .claim(AUTHORIZATION_ROLE, authorities)
                 .signWith(createKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -61,25 +44,16 @@ public class JwtProvider {
     /**
      * refresh token 생성
      */
-    public String createRefreshToken(UserDetailsImpl userDetails) {
+    public String createRefreshToken(Long userId) {
         Date now = new Date();
         Date expiration = new Date(now.getTime() + Duration.ofSeconds(refreshExpirationSeconds).toMillis());
 
-        String authorities = "";
 
-        if (userDetails.getAuthorities() != null && !userDetails.getAuthorities().isEmpty()) {
-            authorities = userDetails.getAuthorities().stream()
-                    .map(GrantedAuthority::getAuthority)
-                    .collect(Collectors.joining(", "));
-        }
 
         return Jwts.builder()
-                .claim("memberId", userDetails.getMemberId())
-                .claim("name", userDetails.getName())
-                .setSubject(userDetails.getUsername())
+                .claim("memberId", userId)
                 .setIssuedAt(now)
                 .setExpiration(expiration)
-                .claim(AUTHORIZATION_ROLE, authorities)
                 .signWith(createKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -87,23 +61,23 @@ public class JwtProvider {
     /**
      * 토큰 정보 추출
      */
-    public Authentication toAuthentication(String token) {
-
-        Claims claims = validate(token).getBody();
-
-        Object roles = claims.get(AUTHORIZATION_ROLE);
-        Set<GrantedAuthority> authorities = null;
-        if (roles != null && !roles.toString().trim().isEmpty()) {
-            authorities = Set.of(new SimpleGrantedAuthority(roles.toString()));
-        }
-        UserDetails user = UserDetailsImpl.builder()
-                .memberId(claims.get("memberId", Long.class))
-                .name(claims.get("name", String.class))
-                .authorities(authorities)
-                .build();
-
-        return new UsernamePasswordAuthenticationToken(user, token, authorities);
-    }
+//    public Authentication toAuthentication(String token) {
+//
+//        Claims claims = validate(token).getBody();
+//
+//        Object roles = claims.get(AUTHORIZATION_ROLE);
+//        Set<GrantedAuthority> authorities = null;
+//        if (roles != null && !roles.toString().trim().isEmpty()) {
+//            authorities = Set.of(new SimpleGrantedAuthority(roles.toString()));
+//        }
+//        UserDetails user = UserDetailsImpl.builder()
+//                .memberId(claims.get("memberId", Long.class))
+//                .name(claims.get("name", String.class))
+//                .authorities(authorities)
+//                .build();
+//
+//        return new UsernamePasswordAuthenticationToken(user, token, authorities);
+//    }
 
 
     /**
