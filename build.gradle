@@ -63,6 +63,7 @@ dependencies {
 
 	//websocket
 	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-websocket', version: '3.2.1'
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.4'
 
 	// open feign
 	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
