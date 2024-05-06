@@ -2,9 +2,9 @@ package com.example.backendmainserver.websocket.application;
 
 import com.example.backendmainserver.PowerData.domain.PowerData;
 import com.example.backendmainserver.PowerData.domain.PowerDataList;
-import com.example.backendmainserver.domain.user.application.UserService;
-import com.example.backendmainserver.domain.user.domain.User;
-import com.example.backendmainserver.domain.user.domain.UserVO;
+import com.example.backendmainserver.user.application.UserService;
+import com.example.backendmainserver.user.domain.User;
+import com.example.backendmainserver.user.domain.UserVO;
 import com.example.backendmainserver.websocket.domain.InMemoryWebSocketSessionRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;

@@ -1,6 +1,6 @@
 package com.example.backendmainserver.websocket.domain;
 
-import com.example.backendmainserver.domain.user.domain.UserVO;
+import com.example.backendmainserver.user.domain.UserVO;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.socket.WebSocketSession;
 import java.util.Map;

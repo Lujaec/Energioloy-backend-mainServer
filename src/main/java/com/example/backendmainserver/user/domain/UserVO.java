@@ -1,4 +1,4 @@
-package com.example.backendmainserver.domain.user.domain;
+package com.example.backendmainserver.user.domain;
 
 import com.example.backendmainserver.room.domain.Room;
 import lombok.Builder;
