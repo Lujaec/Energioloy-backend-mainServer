@@ -27,10 +27,14 @@ public class WebSocketSessionService {
     private final UserService userService;
 
     public void save(WebSocketSession session, Long userId){
+
+
         User user = userService.getUser(userId);
 
         UserVO userVO = UserVO.buildUserVO(user);
         webSocketSessionRepository.save(session, userVO);
+
+        log.info("user: {} connect to websocket session:{}", userId, session.getId());
     }
 
     public void delete(String sessionId){

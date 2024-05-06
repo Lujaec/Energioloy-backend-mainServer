@@ -1,7 +1,6 @@
 package com.example.backendmainserver.websocket.config;
 
 import com.example.backendmainserver.websocket.application.WebSocketSessionService;
-import com.example.backendmainserver.websocket.presentation.AuthenticationInterceptor;
 import com.example.backendmainserver.websocket.presentation.HandShakeAuthorizationInterceptor;
 import com.example.backendmainserver.websocket.presentation.MessageMappingInterceptor;
 import lombok.RequiredArgsConstructor;
