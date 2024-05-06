@@ -1,6 +1,6 @@
 package com.example.backendmainserver.global.security.dto;
 
-import com.example.backendmainserver.domain.user.domain.User;
+import com.example.backendmainserver.user.domain.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

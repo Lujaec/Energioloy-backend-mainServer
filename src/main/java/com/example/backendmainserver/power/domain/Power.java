@@ -1,4 +1,4 @@
-package com.example.backendmainserver.powerMinute.domain;
+package com.example.backendmainserver.power.domain;
 
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -10,10 +10,10 @@ import java.time.LocalDateTime;
 @Entity
 @NoArgsConstructor
 @Data
-public class PowerPerMinute {
+public class Power {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "power_per_minute_id")
+    @Column(name = "power_id")
     private Long id;
 
     @Column
@@ -39,7 +39,7 @@ public class PowerPerMinute {
     private LocalDateTime time;
 
     @Builder
-    public PowerPerMinute(Double powerUsage, Double powerCost, String powerSupplier, Long portId, LocalDateTime time) {
+    public Power(Double powerUsage, Double powerCost, String powerSupplier, Long portId, LocalDateTime time) {
         this.powerUsage = powerUsage;
         this.powerCost = powerCost;
         this.powerSupplier = powerSupplier;
