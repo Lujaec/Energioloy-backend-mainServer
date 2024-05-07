@@ -3,8 +3,10 @@ package com.example.backendmainserver.myroom.domain;
 import com.example.backendmainserver.room.domain.Room;
 import com.example.backendmainserver.user.domain.User;
 import jakarta.persistence.*;
+import lombok.Getter;
 
 @Entity
+@Getter
 public class MyRoom {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

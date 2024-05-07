@@ -2,7 +2,7 @@ spring:
   application:
     name: backend-mainServer
   datasource:
-    url: jdbc:mysql://energiology-db.crg0yqic8dx6.ap-northeast-2.rds.amazonaws.com:3306/prod
+    url: jdbc:mysql://energiology-db.crg0yqic8dx6.ap-northeast-2.rds.amazonaws.com:3306/dev
     username: root
     password: capstoneaplus!!
     driver-class-name: com.mysql.cj.jdbc.Driver
