@@ -28,7 +28,7 @@ public class PowerService {
     private final PowerDataService powerDataService;
     private final PowerRepository powerRepository;
     private final int MAX_PORT_CNT = 5;
-    @Scheduled(cron = "0 * * * * *")
+//    @Scheduled(cron = "0 * * * * *")
     public void convertPowerPerMinute() {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime convertedNow = LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), now.getHour(), now.getMinute());
