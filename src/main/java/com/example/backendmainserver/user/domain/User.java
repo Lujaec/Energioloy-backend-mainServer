@@ -27,6 +27,8 @@ public class User {
 
     private String phoneNumber;
 
+    private String role;
+
     @OneToOne
     @JoinColumn(name = "room_id")
     private Room room;
