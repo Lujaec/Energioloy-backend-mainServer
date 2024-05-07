@@ -11,7 +11,6 @@ import com.example.backendmainserver.power.domain.dto.response.MonthlyPowerPredi
 import com.example.backendmainserver.power.domain.dto.response.MonthlyPowerUsageResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -105,7 +104,7 @@ public class PowerService {
      * 이번 달 전력 사용량, 요금 조회 로직
      * @return
      */
-    public MonthlyPowerUsageResponse getMonthlyPowerUsage() {
+    public MonthlyPowerUsageResponse getMonthlyPowerUsageWithAllRoom() {
         List<Power> currentMonthPower = powerRepository.findCurrentMonthPower();
 
         Double sumPowerUsage = 0.0;
@@ -132,7 +131,7 @@ public class PowerService {
      * 이번 달 전력 예측량, 요금 데이터 조회 로직
      * @return
      */
-    public MonthlyPowerPredictionResponse getMonthlyPowerPrediction() {
+    public MonthlyPowerPredictionResponse getMonthlyPowerPredictionWithAllRoom() {
         List<Power> currentMonthPower = powerRepository.findCurrentMonthPower();
 
         Double sumPowerPredictionUsage= 0.0;
@@ -157,7 +156,7 @@ public class PowerService {
      * 오늘 전력 사용량, 예측량 데이터 조회 로직
      * @return
      */
-    public DailyPowerUsageResponse getDailyPowerUsage() {
+    public DailyPowerUsageResponse getDailyPowerUsageWithAllRoom() {
         List<Power> currentDailyPower = powerRepository.findTodayPower();
         List<Double> powerUsageList = new ArrayList<>() ;
 
@@ -195,7 +194,7 @@ public class PowerService {
      * 오늘 예측량 데이터 조회 로직
      * @return
      */
-    public DailyPowerPredictionResponse getDailyPowerPrediction() {
+    public DailyPowerPredictionResponse getDailyPowerPredictionWithAllRoom() {
         List<Power> currentDailyPower = powerRepository.findTodayPower();
         List<Double> powerPredictionList = new ArrayList<>();
 
