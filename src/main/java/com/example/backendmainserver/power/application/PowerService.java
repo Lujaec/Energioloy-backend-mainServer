@@ -28,7 +28,7 @@ public class PowerService {
     private final PowerDataService powerDataService;
     private final PowerRepository powerRepository;
     private final int MAX_PORT_CNT = 5;
-    @Scheduled(cron = "0 * * * * *")
+//    @Scheduled(cron = "0 * * * * *")
     public void convertPowerPerMinute() {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime convertedNow = LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), now.getHour(), now.getMinute());
@@ -52,9 +52,6 @@ public class PowerService {
             existingPower.setPowerSupplier(powerSupplier);
             existingPower.setPowerCost(totalPower * 20); //임의의 가중치 20
             powerRepository.save(existingPower);
-
-
-
         }
 
         powerDataService.deleteDataBeforeTime(convertedNow);

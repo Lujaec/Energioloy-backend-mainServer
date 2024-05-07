@@ -7,6 +7,7 @@ import com.example.backendmainserver.user.domain.User;
 import com.example.backendmainserver.user.domain.UserVO;
 import com.example.backendmainserver.websocket.domain.InMemoryWebSocketSessionRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -45,6 +46,7 @@ public class WebSocketSessionService {
         Set<Map.Entry<WebSocketSession, UserVO>> entrySet = webSocketSessionRepository.getEntrySet();
         List<PowerData> powerDataList = data.getPowerDataList();
         ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
 
         for (Map.Entry<WebSocketSession, UserVO> webSocketSessionUserVOEntry : entrySet) {
             WebSocketSession webSocketSession = webSocketSessionUserVOEntry.getKey();
