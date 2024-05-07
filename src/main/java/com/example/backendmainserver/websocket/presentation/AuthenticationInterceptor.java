@@ -26,7 +26,7 @@ public class AuthenticationInterceptor implements ChannelInterceptor {
 
         assert headerAccessor != null;
         if (headerAccessor.getCommand() == StompCommand.CONNECT) { // 연결 시에한 header 확인
-            String accessToken = String.valueOf(headerAccessor.getNativeHeader("Authorization").get(0));
+            String accessToken = String.valueOf(headerAccessor.getNativeHeader(AUTHENTICATION_HEADER).get(0));
 
             if (StringUtils.hasText(accessToken) && accessToken.startsWith(AUTHENTICATION_SCHEME)) {
                 accessToken = accessToken.substring(AUTHENTICATION_SCHEME.length());  // 'Bearer ' prefix 제거

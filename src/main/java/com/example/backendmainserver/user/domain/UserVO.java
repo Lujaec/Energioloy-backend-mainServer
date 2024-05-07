@@ -21,6 +21,8 @@ public class UserVO {
 
     private Room room;
 
+    private Role role;
+
     public static UserVO buildUserVO(User user){
         return UserVO.builder()
                 .id(user.getId())
@@ -30,6 +32,7 @@ public class UserVO {
                 .email(user.getEmail())
                 .phoneNumber(user.getPhoneNumber())
                 .room(user.getRoom())
+                .role(user.getRole())
                 .build();
     }
 
