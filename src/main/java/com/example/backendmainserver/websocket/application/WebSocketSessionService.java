@@ -29,8 +29,6 @@ public class WebSocketSessionService {
     private final UserService userService;
 
     public void save(WebSocketSession session, Long userId){
-
-
         User user = userService.getUser(userId);
 
         UserVO userVO = UserVO.buildUserVO(user);
@@ -66,7 +64,7 @@ public class WebSocketSessionService {
             }
 
             if(!sendPowerDataList.isEmpty()) {
-                String jsonMessage = objectMapper.writeValueAsString(sendPowerDataList); // 리스트를 JSON 문자열로 변환
+                String jsonMessage = objectMapper.writeValueAsString(sendPowerDataList);
                 webSocketSession.sendMessage(new TextMessage(jsonMessage));
 
                 log.info("Main Server Send Data To User #{} ", userVO.getId());

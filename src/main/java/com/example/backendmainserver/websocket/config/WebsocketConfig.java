@@ -48,9 +48,8 @@ public class WebsocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        // stomp 웹소켓 endpoint 설정
+        // 웹소켓 endpoint 설정
         // ws://localhost:8080/raspberrypi-websocket
-        // http://배포주소:8080/raspberrypi-websocket
 
         registry.addEndpoint("/raspberrypi-websocket")
                 .setAllowedOriginPatterns("*")
@@ -64,8 +63,7 @@ public class WebsocketConfig implements WebSocketMessageBrokerConfigurer {
                     }
                 });
 
-        // stomp 웹소켓 endpoint 설정
-        // ws://localhost:8080/client
+        // 웹소켓 endpoint 설정
         registry.addEndpoint("/client")
                 .setAllowedOriginPatterns("*")
                 .withSockJS()

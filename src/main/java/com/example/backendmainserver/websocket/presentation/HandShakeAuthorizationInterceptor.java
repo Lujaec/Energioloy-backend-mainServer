@@ -21,7 +21,10 @@ public class HandShakeAuthorizationInterceptor implements HandshakeInterceptor {
     private final String AUTHENTICATION_SCHEME = "Bearer "; // token prefix
     private final JwtProvider jwtProvider;
     @Override
-    public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
+    public boolean beforeHandshake(ServerHttpRequest request,
+                                   ServerHttpResponse response,
+                                   WebSocketHandler wsHandler,
+                                   Map<String, Object> attributes) throws Exception {
         attributes.put("endpoint", "/client");
         String accessToken = extractAccessToken(request);
 

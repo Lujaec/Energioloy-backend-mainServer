@@ -24,6 +24,6 @@ public class PowerDataController {
         powerDataService.storeData(data);
         webSocketSessionService.sendPowerData(data);
 
-        return "from main server !! received: " + data;
+        return "from main server: received data = " + data;
     }
 }
