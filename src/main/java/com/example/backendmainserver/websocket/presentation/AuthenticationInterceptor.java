@@ -26,7 +26,7 @@ public class AuthenticationInterceptor implements ChannelInterceptor {
 
         assert headerAccessor != null;
         if (headerAccessor.getCommand() == StompCommand.CONNECT) { // 연결 시에한 header 확인
-            String accessToken = String.valueOf(headerAccessor.getNativeHeader("Authorization").get(0));
+            String accessToken = String.valueOf(headerAccessor.getNativeHeader(AUTHENTICATION_HEADER).get(0));
 
             if (StringUtils.hasText(accessToken) && accessToken.startsWith(AUTHENTICATION_SCHEME)) {
                 accessToken = accessToken.substring(AUTHENTICATION_SCHEME.length());  // 'Bearer ' prefix 제거
@@ -41,36 +41,5 @@ public class AuthenticationInterceptor implements ChannelInterceptor {
         }
 
         return message;
-    }
-
-//    @Override
-//    public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
-//        attributes.put("endpoint", "/client");
-//        HttpServletRequest servletRequest = ((ServletServerHttpRequest) request).getServletRequest();
-//
-//        String accessToken = extractAccessToken(servletRequest);
-//
-//        if (accessToken == null)
-//            return false;
-//
-//        Claims claims = jwtProvider.validate(accessToken).getBody();
-//        attributes.put("userId", claims.get("memberId", String.class));
-//
-//        return true;
-//    }
-//
-//    @Override
-//    public void afterHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Exception exception) {
-//
-//    }
-
-    private String extractAccessToken(HttpServletRequest request) {
-        String bearerToken = request.getHeader(AUTHENTICATION_HEADER);
-
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(AUTHENTICATION_SCHEME)) {
-            return bearerToken.substring(AUTHENTICATION_SCHEME.length());  // 'Bearer ' prefix 제거
-        }
-
-        throw new IllegalArgumentException("토큰이 존재하지 않습니다.");
     }
 }

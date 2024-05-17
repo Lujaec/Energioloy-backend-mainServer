@@ -3,6 +3,7 @@ package com.example.backendmainserver.websocket.application;
 import com.example.backendmainserver.PowerData.domain.PowerData;
 import com.example.backendmainserver.PowerData.domain.PowerDataList;
 import com.example.backendmainserver.user.application.UserService;
+import com.example.backendmainserver.user.domain.Role;
 import com.example.backendmainserver.user.domain.User;
 import com.example.backendmainserver.user.domain.UserVO;
 import com.example.backendmainserver.websocket.domain.InMemoryWebSocketSessionRepository;
@@ -54,10 +55,12 @@ public class WebSocketSessionService {
             List<PowerData> sendPowerDataList = new ArrayList<>();
 
             List<Long> userPortsId = userService.getPortsId(userVO.getId());
+
+
             for (PowerData powerData : powerDataList) {
                 Long portId = powerData.getPortId();
 
-                if (userPortsId.contains(portId)) {
+                if (userVO.getRole().equals(Role.ADMIN) || userPortsId.contains(portId)) {
                     sendPowerDataList.add(powerData);
                 }
             }

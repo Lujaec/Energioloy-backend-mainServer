@@ -27,6 +27,10 @@ public class User {
 
     private String phoneNumber;
 
+    @Builder.Default
+    @Enumerated(EnumType.STRING)
+    private Role role = Role.USER;
+
     @OneToOne
     @JoinColumn(name = "room_id")
     private Room room;

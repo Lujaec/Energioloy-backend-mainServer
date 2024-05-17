@@ -1,19 +1,25 @@
 package com.example.backendmainserver.global.security.jwt;
 
+import com.example.backendmainserver.global.exception.GlobalException;
+import com.example.backendmainserver.global.response.ErrorCode;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.time.Duration;
 import java.util.Date;
+import java.util.Optional;
 
 @Component
+@Slf4j
 public class JwtProvider {
 
     private final String AUTHORIZATION_ROLE = "authorities";
+    private final String ID_CLAIM = "memberId";
 
     @Value("${jwt.secret-key}")
     private String secretKey;
@@ -34,7 +40,7 @@ public class JwtProvider {
 
 
         return Jwts.builder()
-                .claim("memberId", userId)
+                .claim(ID_CLAIM, userId)
                 .setIssuedAt(now)
                 .setExpiration(expiration)
                 .signWith(createKey(), SignatureAlgorithm.HS256)
@@ -49,9 +55,8 @@ public class JwtProvider {
         Date expiration = new Date(now.getTime() + Duration.ofSeconds(refreshExpirationSeconds).toMillis());
 
 
-
         return Jwts.builder()
-                .claim("memberId", userId)
+                .claim(ID_CLAIM, userId)
                 .setIssuedAt(now)
                 .setExpiration(expiration)
                 .signWith(createKey(), SignatureAlgorithm.HS256)
@@ -79,6 +84,22 @@ public class JwtProvider {
 //        return new UsernamePasswordAuthenticationToken(user, token, authorities);
 //    }
 
+    public Optional<Long> extractId(String accessToken){
+        validateToken(accessToken);
+
+        try {
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(createKey())
+                    .build()
+                    .parseClaimsJws(accessToken)
+                    .getBody();
+
+            Long id = claims.get(ID_CLAIM, Long.class);
+            return id != null ? Optional.of(id) : Optional.empty();
+        } catch (Exception e) {
+            throw new IllegalArgumentException("유효하지 엑세스 토큰입니다.");
+        }
+    }
 
     /**
      * 토큰 검증
@@ -87,8 +108,27 @@ public class JwtProvider {
         JwtParser jwtParser = Jwts.parserBuilder()
                 .setSigningKey(createKey())
                 .build();
+
         return jwtParser.parseClaimsJws(token);
     }
+
+    public boolean validateToken(String token){
+        try {
+            Jws<Claims> claims = Jwts.parserBuilder()
+                    .setSigningKey(createKey())
+                    .build()
+                    .parseClaimsJws(token);
+
+            claims.getBody()
+                    .getExpiration()
+                    .before(new Date());
+
+            return true;
+        } catch (Exception e) {
+            log.info("토큰 인증 실패");
+            throw new GlobalException(ErrorCode.EXPIRED_JWT_ACCESS_TOKEN);
+        }
+    };
 
     private Key createKey() {
         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretKey));
