@@ -33,7 +33,7 @@ public class PowerController {
     private final RoomService roomService;
 
     @Operation(summary="이번달 전력 사용량, 요금 조회 api", description = "이번 달 사용한 전력량 및 요금을 조회하는 api입니다.")
-    @GetMapping("/usage/month/")
+    @GetMapping("/usage/month")
     public ResponseEntity<SuccessResponse<MonthlyPowerUsageResponse>> getMonthlyPowerUsage(@AdminAuthenticationPrincipal User user) {
         return SuccessResponse.of(powerService.getMonthlyPowerUsageWithAllRoom());
     }
@@ -66,7 +66,7 @@ public class PowerController {
      */
 
     @Operation(summary="이번달 전력 사용량 방 별, 요금 조회 api", description = "이번 달 사용한 전력량 및 요금을 방 별 조회하는 api입니다.")
-    @GetMapping("/room/{roomId}/usage/month/")
+    @GetMapping("/room/{roomId}/usage/month")
     public ResponseEntity<SuccessResponse<MonthlyPowerUsageResponse>> getMonthlyPowerUsageWithRoom(@AuthenticationPrincipal User user,
                                                                                            @PathVariable Long roomId) {
         Room room = roomService.getRoomOfUser(user, roomId);
