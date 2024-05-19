@@ -3,6 +3,7 @@ package com.example.backendmainserver.power.application;
 import com.example.backendmainserver.PowerData.application.PowerDataService;
 import com.example.backendmainserver.PowerData.domain.PowerData;
 import com.example.backendmainserver.PowerData.domain.PowerDataList;
+import com.example.backendmainserver.global.application.LocalDateTimeService;
 import com.example.backendmainserver.port.application.PortService;
 import com.example.backendmainserver.power.domain.Power;
 import com.example.backendmainserver.power.domain.PowerRepository;
@@ -26,11 +27,11 @@ public class PowerService {
     private final PowerDataService powerDataService;
     private final PowerRepository powerRepository;
     private final PortService portService;
+    private final LocalDateTimeService localDateTimeService;
     private final int MAX_PORT_CNT = 5;
 //    @Scheduled(cron = "0 * * * * *")
     public void convertPowerPerMinute() {
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime convertedNow = LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), now.getHour(), now.getMinute());
+        LocalDateTime convertedNow = localDateTimeService.getFormattedLocalDateTime(LocalDateTime.now());
         log.info("convertedNow={}", convertedNow.toString());
 
         Map<Long, PowerDataList> store = powerDataService.getStore();

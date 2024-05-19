@@ -1,5 +1,6 @@
 package com.example.backendmainserver.port.application;
 
+import com.example.backendmainserver.global.application.LocalDateTimeService;
 import com.example.backendmainserver.port.domain.*;
 import com.example.backendmainserver.power.application.PowerService;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ import java.util.Map;
 public class PowerSupplierCalculator {
     private final PortService portService;
     private final PowerService powerService;
+    private final LocalDateTimeService localDateTimeService;
 
     //현재 시점에 적합한 PowerSupplier를 계산
     public PowerSupplier calculatePowerSupplier(final Long portId, final Double powerUsage) {
@@ -41,8 +43,7 @@ public class PowerSupplierCalculator {
             String optionConfiguration = batterySwitchOption.getOptionConfiguration();
             Integer ratio = Integer.parseInt(optionConfiguration);
 
-            LocalDateTime now = LocalDateTime.now();
-            LocalDateTime convertedNow = LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), now.getHour(), now.getMinute());
+            LocalDateTime convertedNow = localDateTimeService.getFormattedLocalDateTime(LocalDateTime.now());
 
             Double predictionPowerUsage = powerService.getPredictionPowerUsage(portId, convertedNow);
 
