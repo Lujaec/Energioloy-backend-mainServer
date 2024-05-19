@@ -5,6 +5,7 @@ import com.example.backendmainserver.PowerData.domain.PowerData;
 import com.example.backendmainserver.PowerData.domain.PowerDataList;
 import com.example.backendmainserver.global.application.LocalDateTimeService;
 import com.example.backendmainserver.port.application.PortService;
+import com.example.backendmainserver.port.domain.Port;
 import com.example.backendmainserver.power.domain.Power;
 import com.example.backendmainserver.power.domain.PowerRepository;
 import com.example.backendmainserver.power.domain.dto.response.DailyPowerPredictionResponse;
@@ -358,5 +359,23 @@ public class PowerService {
                 .orElseThrow(() -> new IllegalStateException("portId와 시간으로 Power row를 찾을 수없습니다"));
 
         return power.getPowerPredictionUsage();
+    }
+
+    /**
+     * key: portId
+     * value: 실제 사용 전력
+     */
+    public Map<Long, Double> getPowerUsageAllPorts(LocalDateTime time){
+        Map<Long, Double> map = new HashMap<>();
+        List<Power> powerList = powerRepository.findAllByTimeOrderByPortId(time);
+
+        for (Power power : powerList) {
+            Long portId = power.getPortId();
+            Double powerUsage = power.getPowerUsage();
+
+            map.put(portId, powerUsage);
+        }
+
+        return map;
     }
 }

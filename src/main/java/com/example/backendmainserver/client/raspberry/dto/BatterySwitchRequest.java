@@ -1,4 +1,10 @@
 package com.example.backendmainserver.client.raspberry.dto;
 
-public record BatterySwitchRequest(String powerSupplier) {
+
+import java.util.List;
+
+public record BatterySwitchRequest(List<PortAndSupplier> portAndSuppliers) {
+
 }
+
+

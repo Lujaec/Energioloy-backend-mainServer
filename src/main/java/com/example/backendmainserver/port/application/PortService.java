@@ -5,8 +5,6 @@ import com.example.backendmainserver.port.domain.PortRepository;
 import com.example.backendmainserver.room.domain.Room;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,6 +21,10 @@ public class PortService {
         }).toList();
 
         return portIds;
+    }
+
+    public List<Port> getAllPorts(){
+        return portRepository.findAll();
     }
 
     public Port getPortById(Long portId){

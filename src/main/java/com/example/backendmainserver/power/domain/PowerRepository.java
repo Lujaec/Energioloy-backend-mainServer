@@ -25,4 +25,6 @@ public interface PowerRepository extends JpaRepository<Power, Long> {
     List<Power> findTodayPowerWithPortId(@Param("portId") Long portId);
 
     Optional<Power> findByPortIdAndTime(Long portId, LocalDateTime time);
+
+    List<Power> findAllByTimeOrderByPortId(LocalDateTime time);
 }
