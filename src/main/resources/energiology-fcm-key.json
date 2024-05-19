@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "energiology-4bacb",
+  "private_key_id": "973a2da684c308f561cca1674ed74affc96126e5",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEuwIBADANBgkqhkiG9w0BAQEFAASCBKUwggShAgEAAoIBAQCUcxwWPi+8wilA\nhGV/PzDtfQj2CmML/lzetwIPzhXJwXDNM6kOYdCgbbxv7FtLhZXqjc4ZDnZyyi6H\n+M66ku60EHD8L49YYeXRTcU0hwm0wJ99kbMEBAa/NnJr2CX4r2RaxK+xxMJfESOa\nnvb/bt11fVSKRyq6tZLpAdYD2R7CyEuAfvae4Fq9lhBXVOaH8DKeCSn2vQ4EBxVd\nVN90wURa3mLkpgE01pXPuwnlY3Q1pepeCxVBr0k/ekx2w0V+TG389CZg0H0ktQHP\n6PQsoryw7dXbyxGccaW9fFteyTPh9LMKcfGcefjTvHv9NsLpyYAiHr7zwCR0Quxf\n83+l3+8JAgMBAAECgf9Wk7ltv4Sg+tLUQBnffIjjZrHqFfcAXosv2PB64rHJNHp1\nMudO7kZVSjz8G9g1HJzW/J0EQAHwMJWyrkAHq45wSBQvSTInnjoBN8x0yF8lWY1h\nzonm22ABrd9yM8/M4ut7O2hzQHbAcfDEJdZw9OnhaXJEsyFYgwP46fk08wvdqGGu\nAKPR+RFnGrObJ/crn6WKacDfVEGTYTw5VT6ARS90FlUuW5zyjAaklmVVPfCoqif6\njZAl7IPpB0lVhEk/QtbjFrUrG08FdcfSt9AHA8fSqa+457XcmGYg+VttjhFS8Z1u\nnMIQ0RPTr38scsTuj6S76Po0GmsEhGdapyo613ECgYEAzVjyBEKqVJ0vnRsyNXHN\n2f65gthquLVsEOGoYv69dz8BeICJ4a2H6hdGELBrY+dPPnNcW8241RLUcYVIpfyU\n8q5ANRKvv+Q5wi5AQKHJEhROSQ6kdka3igEJ9iqiGo5mi3ijg7Ipj8JycnixnA45\nifyeAmDkCl1qMK5bg4tz8NkCgYEAuRE+sHeiop2j2EBj+EPwgcw/kFa7cKDzN2Bl\n9zA2AHhiKnGfXplvO6soZEsNs7PXrXozE70KWeHNiT6LxxKNarQFEmQ3QKFLjE3b\n6E4/ER/zViFY77CwwGJ+XE8IhMo+MTZ66cxNaMpqhPelvFuvTtTqWCJp3uk+lQdx\nMHJ4EbECgYB17AUXQz1TV+zW2J5NqKvg6vGXXTZ0GeMUErJDHyyohOsQSyhjC+cI\nHBNlVBpnhZaxM0gvhAUHf0e2ZSbiAxl5/2zpzXBVzvcINs05EG9KTZTjSWBSd6vA\nuXYCAluSyoHCyCWGZFKPtsdIS10bU+PhBMusa/2oohpwGEB/Wx7aiQKBgCjTFgol\nifnnXnJg2ey1SAPKA6eaimSxDJYFrNiXiQIXjEgiom5i2HfILPPa3p3qqUQ6dbP/\n+p2TQxzocDss64dDSO8irlGSgzDjKASZ5i2n56zzVEQjrQnzcD56rL1mQ8vlYb3b\ndKQOKutEGgpwCz8PltZ0WPh0aXrEloKCbdwxAoGBAMeFEN38JVpdpXED5SHy+tpu\nxnLPjRcxeQDIe8V8fKrf7xckvowYwntLMDNMkpPkaJMnCMpwqYHCm7h0wcTpcYIl\nUQc6RcNjo8GiIXzuhHisz5CxSlK2QUcokS3na5HHOzsCtUWWTgym2iVDXYsNnPa4\nYe0LXXT6Oyhc3PGqSWfN\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-7k0xb@energiology-4bacb.iam.gserviceaccount.com",
+  "client_id": "100200114317093515517",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-7k0xb%40energiology-4bacb.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
