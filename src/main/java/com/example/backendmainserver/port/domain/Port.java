@@ -19,4 +19,17 @@ public class Port {
     @ManyToOne
     @JoinColumn(name = "room_id")
     private Room room;
+
+    @Embedded
+    private BatterySwitchOption batterySwitchOption;
+
+    public void validateBatterySwitchOption(){
+        BatterySwitchOptionType batterySwitchOptionType = batterySwitchOption.getBatterySwitchOptionType();
+
+        if (!(batterySwitchOptionType.equals(BatterySwitchOptionType.OPTION_TIME) ||
+                batterySwitchOptionType.equals(BatterySwitchOptionType.OPTION_PREDICTION))){
+            throw new IllegalArgumentException("유효하지 않은 배터리 스위치 타입입니다.");
+        }
+    }
+
 }

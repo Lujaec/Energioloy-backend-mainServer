@@ -17,10 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -353,5 +350,12 @@ public class PowerService {
                 .powerPredictionUsage(sumPowerPredictionUsage)
                 .powerPredictionDataList(powerPredictionList)
                 .build();
+    }
+
+    public Double getPredictionPowerUsage(Long portId, LocalDateTime time){
+        Power power = powerRepository.findByPortIdAndTime(portId, time)
+                .orElseThrow(() -> new IllegalStateException("portId와 시간으로 Power row를 찾을 수없습니다"));
+
+        return power.getPowerPredictionUsage();
     }
 }
