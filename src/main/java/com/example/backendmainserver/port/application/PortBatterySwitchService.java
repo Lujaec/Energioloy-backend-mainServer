@@ -1,8 +1,10 @@
 package com.example.backendmainserver.port.application;
 
 import com.example.backendmainserver.client.raspberry.RaspberryClient;
-import com.example.backendmainserver.client.raspberry.dto.BatterySwitchRequest;
-import com.example.backendmainserver.client.raspberry.dto.PortAndSupplier;
+import com.example.backendmainserver.client.raspberry.dto.request.BatterySwitchRequest;
+import com.example.backendmainserver.client.raspberry.dto.request.PortAndSupplier;
+import com.example.backendmainserver.client.raspberry.dto.response.BatterySwitchResponse;
+import com.example.backendmainserver.client.raspberry.dto.response.PortAndResult;
 import com.example.backendmainserver.global.application.LocalDateTimeService;
 import com.example.backendmainserver.port.domain.Port;
 import com.example.backendmainserver.port.domain.PowerSupplier;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -43,6 +46,34 @@ public class PortBatterySwitchService {
                 portAndSupplierList.add(new PortAndSupplier(portId, calculatedPowerSupplier.getName()));
         }
 
-        raspberryClient.requestPortBatterySwitch(new BatterySwitchRequest(portAndSupplierList));
+        BatterySwitchRequest batterySwitchRequest = new BatterySwitchRequest(portAndSupplierList);
+        BatterySwitchResponse batterySwitchResponse =
+                raspberryClient.requestPortBatterySwitch(batterySwitchRequest);
+
+        updatePowerSupplier(batterySwitchRequest, batterySwitchResponse);
+    }
+
+    private void updatePowerSupplier(BatterySwitchRequest batterySwitchRequest,
+                                     BatterySwitchResponse batterySwitchResponse){
+        List<PortAndSupplier> portAndSuppliers = batterySwitchRequest.portAndSuppliers();
+        List<PortAndResult> portAndResults = batterySwitchResponse.portAndResults();
+
+        Map<Long, String> map = new HashMap();
+
+        portAndSuppliers.stream().forEach(
+                (e)->{
+                    map.put(e.portId(), e.powerSupplier());
+                }
+        );
+
+        for (PortAndResult portAndResult : portAndResults) {
+            Long portId = portAndResult.portId();
+            String result = portAndResult.result();
+
+            if(result.equals("success")){
+                String nextSupplier = map.get(portId);
+                portService.updatePowerSupplier(portId, PowerSupplier.valueOf(nextSupplier));
+            }
+        }
     }
 }
