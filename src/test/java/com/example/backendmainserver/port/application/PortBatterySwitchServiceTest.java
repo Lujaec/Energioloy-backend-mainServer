@@ -41,40 +41,6 @@ public class PortBatterySwitchServiceTest {
 
     @InjectMocks
     private PortBatterySwitchService portBatterySwitchService;
-
-    @Test
-    public void testRequestPortBatterySwitch() {
-        // 가짜 데이터 설정
-        LocalDateTime currentTime = LocalDateTime.now();
-        LocalDateTime oneMinuteBefore = currentTime.minusMinutes(1);
-        Map<Long, Double> powerUsageAllPorts = new HashMap<>();
-        powerUsageAllPorts.put(1L, 100.0); // 예시로 하나의 포트에 대한 사용량을 설정
-        powerUsageAllPorts.put(2L, 100.0); // 예시로 하나의 포트에 대한 사용량을 설정
-
-        List<Port> ports = List.of(
-                Port.builder()
-                        .id(1L)
-                        .powerSupplier(PowerSupplier.BATTERY).build(),
-                Port.builder()
-                        .id(2L)
-                        .powerSupplier(PowerSupplier.BATTERY).build()
-        );
-
-        // Mock 설정
-        when(portService.getAllPorts()).thenReturn(ports);
-        when(powerService.getPowerUsageAllPorts(any(LocalDateTime.class))).thenReturn(powerUsageAllPorts);
-
-        // calculatePowerSupplier 메서드의 반환값 설정 (필요에 따라 변경할 수 있음)
-        when(powerSupplierCalculator.calculatePowerSupplier(eq(1L), any(Double.class))).thenReturn(PowerSupplier.BATTERY);
-        when(powerSupplierCalculator.calculatePowerSupplier(eq(2L), any(Double.class))).thenReturn(PowerSupplier.BATTERY);
-
-        // 테스트할 메서드 호출
-        portBatterySwitchService.requestPortBatterySwitch();
-
-        // raspberryClient의 requestPortBatterySwitch 메서드가 호출되었는지 검증
-        verify(raspberryClient, times(1)).requestPortBatterySwitch(any());
-    }
-
     @Test
     void testRequestPortBatterySwitchData() {
         // Setting up Ports
