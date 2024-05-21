@@ -1,8 +1,10 @@
 package com.example.backendmainserver.port.application;
 
 import com.example.backendmainserver.client.raspberry.RaspberryClient;
-import com.example.backendmainserver.client.raspberry.dto.BatterySwitchRequest;
-import com.example.backendmainserver.client.raspberry.dto.PortAndSupplier;
+import com.example.backendmainserver.client.raspberry.dto.request.BatterySwitchRequest;
+import com.example.backendmainserver.client.raspberry.dto.request.PortAndSupplier;
+import com.example.backendmainserver.client.raspberry.dto.response.BatterySwitchResponse;
+import com.example.backendmainserver.client.raspberry.dto.response.PortAndResult;
 import com.example.backendmainserver.global.application.LocalDateTimeService;
 import com.example.backendmainserver.port.domain.Port;
 import com.example.backendmainserver.port.domain.PowerSupplier;
@@ -80,6 +82,10 @@ public class PortBatterySwitchServiceTest {
         Port port2 = Port.builder().id(2L).powerSupplier(PowerSupplier.EXTERNAL).build();
         Port port3 = Port.builder().id(3L).powerSupplier(PowerSupplier.EXTERNAL).build();
         List<Port> ports = List.of(port1, port2, port3);
+        BatterySwitchResponse mockResponse = new BatterySwitchResponse(List.of(
+                new PortAndResult(port2.getId(), "success"),
+                new PortAndResult(port3.getId(), "success")));
+
         when(portService.getAllPorts()).thenReturn(ports);
 
         // Setting up power usage and power suppliers
@@ -92,11 +98,12 @@ public class PortBatterySwitchServiceTest {
         when(powerSupplierCalculator.calculatePowerSupplier(1L, 100.0)).thenReturn(PowerSupplier.BATTERY);
         when(powerSupplierCalculator.calculatePowerSupplier(2L, 200.0)).thenReturn(PowerSupplier.BATTERY);
         when(powerSupplierCalculator.calculatePowerSupplier(3L, 200.0)).thenReturn(PowerSupplier.BATTERY);
+        when(raspberryClient.requestPortBatterySwitch(any(BatterySwitchRequest.class))).thenReturn(mockResponse);
 
-        // When
-        portBatterySwitchService.requestPortBatterySwitch();
 
         // Then
+        portBatterySwitchService.requestPortBatterySwitch();
+
         // Verify if the request to switch the battery includes the right ports
         ArgumentCaptor<BatterySwitchRequest> batterySwitchRequestArgumentCaptor = ArgumentCaptor.forClass(BatterySwitchRequest.class);
         verify(raspberryClient).requestPortBatterySwitch(batterySwitchRequestArgumentCaptor.capture());
