@@ -2,11 +2,14 @@ package com.example.backendmainserver.port.application;
 
 import com.example.backendmainserver.port.domain.Port;
 import com.example.backendmainserver.port.domain.PortRepository;
+import com.example.backendmainserver.port.domain.PowerSupplier;
 import com.example.backendmainserver.room.domain.Room;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -21,5 +24,25 @@ public class PortService {
         }).toList();
 
         return portIds;
+    }
+
+    public List<Port> getAllPorts(){
+        return portRepository.findAll();
+    }
+
+    public Port getPortById(Long portId){
+        Optional<Port> optionalPort = portRepository.findById(portId);
+
+        if (optionalPort.isEmpty())
+            throw new IllegalArgumentException("유효하지 않은 포트 식별자 입니다. portId = " + portId);
+
+        return optionalPort.get();
+    }
+
+    @Transactional
+    public void updatePowerSupplier(Long portId, PowerSupplier powerSupplier){
+        Port port = getPortById(portId);
+
+        port.setPowerSupplier(powerSupplier);
     }
 }

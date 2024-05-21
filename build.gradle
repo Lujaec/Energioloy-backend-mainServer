@@ -67,6 +67,9 @@ dependencies {
 
 	// open feign
 	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+	testImplementation 'com.squareup.okhttp3:mockwebserver:4.9.3'
+	testImplementation 'io.github.openfeign:feign-jackson:11.8'
+	testImplementation 'com.fasterxml.jackson.core:jackson-databind:2.13.0'
 }
 
 tasks.named('test') {
