@@ -11,6 +11,7 @@ import com.example.backendmainserver.port.domain.PowerSupplier;
 import com.example.backendmainserver.power.application.PowerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -29,6 +30,7 @@ public class PortBatterySwitchService {
     private final LocalDateTimeService localDateTimeService;
     private final RaspberryClient raspberryClient;
 
+    @Scheduled(cron = "5 * * * * ?")
     public void requestPortBatterySwitch(){
         List<Port> ports = portService.getAllPorts();
         List<PortAndSupplier> portAndSupplierList = new ArrayList<>();
