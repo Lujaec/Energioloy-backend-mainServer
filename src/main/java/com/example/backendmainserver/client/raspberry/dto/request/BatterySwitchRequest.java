@@ -1,4 +1,4 @@
-package com.example.backendmainserver.client.raspberry.dto;
+package com.example.backendmainserver.client.raspberry.dto.request;
 
 
 import java.util.List;
