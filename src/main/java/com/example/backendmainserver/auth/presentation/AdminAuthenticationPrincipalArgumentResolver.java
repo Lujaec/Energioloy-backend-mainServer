@@ -23,7 +23,7 @@ public class AdminAuthenticationPrincipalArgumentResolver implements HandlerMeth
     private final UserService userService;
     @Override
     public boolean supportsParameter(final MethodParameter parameter) {
-        return parameter.hasParameterAnnotation(AuthenticationPrincipal.class);
+        return parameter.hasParameterAnnotation(AdminAuthenticationPrincipal.class);
     }
 
     @Override
