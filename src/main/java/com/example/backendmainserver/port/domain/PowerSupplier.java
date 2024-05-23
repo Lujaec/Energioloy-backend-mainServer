@@ -1,7 +1,7 @@
 package com.example.backendmainserver.port.domain;
 
 public enum PowerSupplier {
-    EXTERNAL("EXTERNAL"), BATTERY("BATTERY");
+    EXTERNAL("EXTERNAL"), BATTERY("BATTERY"), OFF("OFF");
 
     private final String name;
 
