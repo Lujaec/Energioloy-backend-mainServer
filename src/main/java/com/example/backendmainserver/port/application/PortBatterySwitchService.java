@@ -49,6 +49,10 @@ public class PortBatterySwitchService {
         }
 
         BatterySwitchRequest batterySwitchRequest = new BatterySwitchRequest(portAndSupplierList);
+        requestBatterySwitchToRaspberry(batterySwitchRequest);
+    }
+
+    public void requestBatterySwitchToRaspberry(BatterySwitchRequest batterySwitchRequest) {
         BatterySwitchResponse batterySwitchResponse =
                 raspberryClient.requestPortBatterySwitch(batterySwitchRequest);
 
