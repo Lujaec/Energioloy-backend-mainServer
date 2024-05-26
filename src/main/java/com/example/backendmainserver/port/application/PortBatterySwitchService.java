@@ -42,7 +42,7 @@ public class PortBatterySwitchService {
             PowerSupplier currentPowerSupplier = port.getPowerSupplier();
 
             PowerSupplier calculatedPowerSupplier = powerSupplierCalculator.
-                    calculatePowerSupplier(portId, powerUsageAllPorts.get(portId));
+                    calculatePowerSupplier(portId, powerUsageAllPorts.get(portId), currentPowerSupplier);
 
             if(!currentPowerSupplier.equals(calculatedPowerSupplier))
                 portAndSupplierList.add(new PortAndSupplier(portId, calculatedPowerSupplier.getName()));

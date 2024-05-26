@@ -61,9 +61,9 @@ public class PortBatterySwitchServiceTest {
         powerUsageAllPorts.put(3L, 200.0);
 
         when(powerService.getPowerUsageAllPorts(any(LocalDateTime.class))).thenReturn(powerUsageAllPorts);
-        when(powerSupplierCalculator.calculatePowerSupplier(1L, 100.0)).thenReturn(PowerSupplier.BATTERY);
-        when(powerSupplierCalculator.calculatePowerSupplier(2L, 200.0)).thenReturn(PowerSupplier.BATTERY);
-        when(powerSupplierCalculator.calculatePowerSupplier(3L, 200.0)).thenReturn(PowerSupplier.BATTERY);
+        when(powerSupplierCalculator.calculatePowerSupplier(1L, 100.0, PowerSupplier.EXTERNAL)).thenReturn(PowerSupplier.BATTERY);
+        when(powerSupplierCalculator.calculatePowerSupplier(2L, 200.0, PowerSupplier.EXTERNAL)).thenReturn(PowerSupplier.BATTERY);
+        when(powerSupplierCalculator.calculatePowerSupplier(3L, 200.0, PowerSupplier.EXTERNAL)).thenReturn(PowerSupplier.BATTERY);
         when(raspberryClient.requestPortBatterySwitch(any(BatterySwitchRequest.class))).thenReturn(mockResponse);
 
 
