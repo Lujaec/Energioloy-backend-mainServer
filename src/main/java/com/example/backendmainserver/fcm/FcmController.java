@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 
 @Slf4j
 @RestController
@@ -34,22 +35,22 @@ public class FcmController {
 //        fcmService.sendByFcmToken(message);
 //    }
 
-    @SecurityRequirements(value = {})
-    @PostMapping("/1")
-    public ResponseEntity<SuccessResponse<String>> sendMessage1(@RequestBody MessageDto messageDto) throws IOException {
-        log.info("msg fcm token1 : "+messageDto.fcmToken());
-        log.info("msg title1 : "+messageDto.title());
-        log.info("msg body1 : "+messageDto.body());
+//    @SecurityRequirements(value = {})
+//    @PostMapping("/1")
+//    public ResponseEntity<SuccessResponse<String>> sendMessage1(@RequestBody MessageDto messageDto) throws IOException {
+//        log.info("msg fcm token1 : "+messageDto.fcmToken());
+//        log.info("msg title1 : "+messageDto.title());
+//        log.info("msg body1 : "+messageDto.body());
+//
+//        fcmService.sendMessage1(
+//                messageDto);
+//        return SuccessResponse.of("v메세지 발송 성공1\")");
+////        return ResponseEntity.ok(new ApiSuccessResponse<>("메세지 발송 성공1"));
+////        return ResponseEntity.ok().build();
+//    }
 
-        fcmService.sendMessage1(
-                messageDto);
-        return SuccessResponse.of("v메세지 발송 성공1\")");
-//        return ResponseEntity.ok(new ApiSuccessResponse<>("메세지 발송 성공1"));
-//        return ResponseEntity.ok().build();
-    }
-
     @SecurityRequirements(value = {})
-    @PostMapping("/2")
+    @PostMapping("/app")
     public ResponseEntity<SuccessResponse<String>> sendMessage2(@RequestBody MessageDto messageDto) throws IOException {
         log.info("msg fcm token2 : "+messageDto.fcmToken());
         log.info("msg title2 : "+messageDto.title());
@@ -57,6 +58,18 @@ public class FcmController {
 
         fcmService.sendMessage2(
                 messageDto);
+
+        return SuccessResponse.of("v메세지 발송 성공2");
+//        return ResponseEntity.ok(new ApiSuccessResponse<>("메세지 발송 성공2"));
+//        return ResponseEntity.ok().build();
+    }
+
+    @SecurityRequirements(value = {})
+    @PostMapping("/web")
+    public ResponseEntity<SuccessResponse<String>> sendMessage3()  throws ExecutionException, InterruptedException {
+
+
+        fcmService.sendMessageWeb();
 
         return SuccessResponse.of("v메세지 발송 성공2");
 //        return ResponseEntity.ok(new ApiSuccessResponse<>("메세지 발송 성공2"));
