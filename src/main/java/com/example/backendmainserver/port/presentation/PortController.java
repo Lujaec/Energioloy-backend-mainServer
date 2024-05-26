@@ -40,8 +40,8 @@ public class PortController {
             @AdminAuthenticationPrincipal User user,
             @RequestBody PortControlRequest portControlRequest){
 
-        portBatterySwitchService.manualPortBatterySwitch(portControlRequest.portIdAndState().portId(),
-                portControlRequest.portIdAndState().state());
+        portBatterySwitchService.manualPortBatterySwitch(portControlRequest.portId(),
+                portControlRequest.state());
 
         return SuccessResponse.of(HttpStatus.OK);
     }
@@ -72,12 +72,5 @@ public class PortController {
         }).toList();
 
         return list;
-    }
-
-    public BatterySwitchRequest convertToBatterySwitchRequest(PortControlRequest portControlRequest) {
-        PortIdAndState portIdAndState = portControlRequest.portIdAndState();
-
-        PortAndSupplier portAndSupplier = new PortAndSupplier(portIdAndState.portId(), portIdAndState.state());
-        return new BatterySwitchRequest(List.of(portAndSupplier));
     }
 }
