@@ -15,11 +15,15 @@ public class PowerDataList {
     public PowerDataList() {
     }
 
-    @Override
     public String toString() {
-        return "PowerDataList{" +
-                "powerDataList=" + powerDataList.toString() +
-                '}';
+        StringBuilder sb = new StringBuilder("PowerDataList{\n");
+        if (powerDataList != null) {
+            for (PowerData pd : powerDataList) {
+                sb.append("    ").append(pd.toString()).append(",\n");
+            }
+        }
+        sb.append('}');
+        return sb.toString();
     }
 
     @Builder
