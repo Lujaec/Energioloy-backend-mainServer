@@ -2,6 +2,7 @@ package com.example.backendmainserver.fcm;
 
 import com.example.backendmainserver.global.response.SuccessResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
+@Tag(name = "FCM API", description = "FCM 메세지를 보내는 api 컨트롤러")
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -21,58 +23,18 @@ import java.util.concurrent.ExecutionException;
 public class FcmController {
     private final FcmService fcmService;
 
-//    @SecurityRequirements(value = {})
-//    @PostMapping("/fcm/send")
-//    public void fcmSendTest(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-//        Long memberId = userDetails.getMemberId();
-//        MessageDto message = MessageDto.builder()
-//                .memberId(memberId)
-//                .title("fcm title in Controller")
-//                .content("fcm content in Controller")
-//                .build();
-//
-//
-//        fcmService.sendByFcmToken(message);
-//    }
-
-//    @SecurityRequirements(value = {})
-//    @PostMapping("/1")
-//    public ResponseEntity<SuccessResponse<String>> sendMessage1(@RequestBody MessageDto messageDto) throws IOException {
-//        log.info("msg fcm token1 : "+messageDto.fcmToken());
-//        log.info("msg title1 : "+messageDto.title());
-//        log.info("msg body1 : "+messageDto.body());
-//
-//        fcmService.sendMessage1(
-//                messageDto);
-//        return SuccessResponse.of("v메세지 발송 성공1\")");
-////        return ResponseEntity.ok(new ApiSuccessResponse<>("메세지 발송 성공1"));
-////        return ResponseEntity.ok().build();
-//    }
-
     @SecurityRequirements(value = {})
-    @PostMapping("/app")
-    public ResponseEntity<SuccessResponse<String>> sendMessage2(@RequestBody MessageDto messageDto) throws IOException {
-        log.info("msg fcm token2 : "+messageDto.fcmToken());
-        log.info("msg title2 : "+messageDto.title());
-        log.info("msg body2 : "+messageDto.body());
+    @PostMapping("/message")
+    public ResponseEntity<SuccessResponse<String>> sendMessage(@RequestBody MessageDto messageDto) throws IOException {
+        log.info("msg fcm token : "+messageDto.fcmToken());
+        log.info("msg title : "+messageDto.title());
+        log.info("msg body : "+messageDto.body());
 
-        fcmService.sendMessage2(
+        fcmService.sendMessage(
                 messageDto);
 
-        return SuccessResponse.of("v메세지 발송 성공2");
-//        return ResponseEntity.ok(new ApiSuccessResponse<>("메세지 발송 성공2"));
-//        return ResponseEntity.ok().build();
+        return SuccessResponse.of("메세지 발송 성공");
+
     }
 
-    @SecurityRequirements(value = {})
-    @PostMapping("/web")
-    public ResponseEntity<SuccessResponse<String>> sendMessage3()  throws ExecutionException, InterruptedException {
-
-
-        fcmService.sendMessageWeb();
-
-        return SuccessResponse.of("v메세지 발송 성공2");
-//        return ResponseEntity.ok(new ApiSuccessResponse<>("메세지 발송 성공2"));
-//        return ResponseEntity.ok().build();
-    }
 }

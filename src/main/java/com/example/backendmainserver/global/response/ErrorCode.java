@@ -38,6 +38,8 @@ public enum ErrorCode {
     /**
      *  404 Not Found
      */
+    FCM_TOKEN_NOT_FOUND(404,HttpStatus.NOT_FOUND, "fcm토큰이 올바르지 않습니다."),
+
     ENTITY_NOT_FOUND(404,HttpStatus.NOT_FOUND, "요청하신 엔티티를 찾을 수 없습니다."),
     USER_NOT_FOUND(404,HttpStatus.NOT_FOUND, "요청하신 유저를 찾을 수 없습니다."),
     NOT_SIGN_IN_KAKAO_ID(404,HttpStatus.NOT_FOUND, "회원가입되지 않은 KAKAO 계정입니다. 회원가입을 진행해 주세요"),
