@@ -1,8 +1,6 @@
 package com.example.backendmainserver.port.application;
 
-import com.example.backendmainserver.port.domain.Port;
-import com.example.backendmainserver.port.domain.PortRepository;
-import com.example.backendmainserver.port.domain.PowerSupplier;
+import com.example.backendmainserver.port.domain.*;
 import com.example.backendmainserver.room.domain.Room;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -45,4 +43,13 @@ public class PortService {
 
         port.setPowerSupplier(powerSupplier);
     }
+
+    @Transactional
+    public void updateBatterySwitchOption(Long portId, BatterySwitchOptionType batterySwitchOptionType, String  optionConfiguration){
+        Port port = getPortById(portId);
+        BatterySwitchOption batterySwitchOption = new BatterySwitchOption(batterySwitchOptionType, optionConfiguration);
+        port.updateBatterSwitchOption(batterySwitchOption);
+    }
+
+
 }

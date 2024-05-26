@@ -68,7 +68,7 @@ public class PortBatterySwitchServiceTest {
 
 
         // Then
-        portBatterySwitchService.requestPortBatterySwitch();
+        portBatterySwitchService.autoPortBatterySwitch();
 
         // Verify if the request to switch the battery includes the right ports
         ArgumentCaptor<BatterySwitchRequest> batterySwitchRequestArgumentCaptor = ArgumentCaptor.forClass(BatterySwitchRequest.class);

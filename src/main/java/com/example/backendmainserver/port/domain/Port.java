@@ -38,13 +38,19 @@ public class Port {
         this.powerSupplier = powerSupplier;
     }
 
-    public void validateBatterySwitchOption(){
-        BatterySwitchOptionType batterySwitchOptionType = batterySwitchOption.getBatterySwitchOptionType();
+    public void validateBatterySwitchOptionType(BatterySwitchOptionType batterySwitchOptionType){
+        batterySwitchOptionType = batterySwitchOption.getBatterySwitchOptionType();
 
         if (!(batterySwitchOptionType.equals(BatterySwitchOptionType.OPTION_TIME) ||
-                batterySwitchOptionType.equals(BatterySwitchOptionType.OPTION_PREDICTION))){
+                batterySwitchOptionType.equals(BatterySwitchOptionType.OPTION_PREDICTION) ||
+                batterySwitchOptionType.equals(BatterySwitchOptionType.OPTION_MANUAL))){
             throw new IllegalArgumentException("유효하지 않은 배터리 스위치 타입입니다.");
         }
     }
 
+    public void updateBatterSwitchOption(BatterySwitchOption batterySwitchOption){
+        BatterySwitchOptionType batterySwitchOptionType = batterySwitchOption.getBatterySwitchOptionType();
+        validateBatterySwitchOptionType(batterySwitchOptionType);
+        this.batterySwitchOption = batterySwitchOption;
+    }
 }

@@ -6,13 +6,16 @@ import com.example.backendmainserver.client.raspberry.dto.request.PortAndSupplie
 import com.example.backendmainserver.client.raspberry.dto.response.BatterySwitchResponse;
 import com.example.backendmainserver.client.raspberry.dto.response.PortAndResult;
 import com.example.backendmainserver.global.application.LocalDateTimeService;
+import com.example.backendmainserver.port.domain.BatterySwitchOptionType;
 import com.example.backendmainserver.port.domain.Port;
 import com.example.backendmainserver.port.domain.PowerSupplier;
+import com.example.backendmainserver.port.presentation.dto.request.PortIdAndState;
 import com.example.backendmainserver.power.application.PowerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -28,10 +31,8 @@ public class PortBatterySwitchService {
     private final PortService portService;
     private final PowerService powerService;
     private final LocalDateTimeService localDateTimeService;
-    private final RaspberryClient raspberryClient;
-
     @Scheduled(cron = "5 * * * * ?")
-    public void requestPortBatterySwitch(){
+    public void autoPortBatterySwitch(){
         List<Port> ports = portService.getAllPorts();
         List<PortAndSupplier> portAndSupplierList = new ArrayList<>();
         Map<Long, Double> powerUsageAllPorts = powerService
@@ -45,11 +46,24 @@ public class PortBatterySwitchService {
                     calculatePowerSupplier(portId, powerUsageAllPorts.get(portId), currentPowerSupplier);
 
             if(!currentPowerSupplier.equals(calculatedPowerSupplier))
-                portAndSupplierList.add(new PortAndSupplier(portId, calculatedPowerSupplier.getName()));
+                portAndSupplierList.add(new PortAndSupplier(portId, calculatedPowerSupplier));
         }
 
         BatterySwitchRequest batterySwitchRequest = new BatterySwitchRequest(portAndSupplierList);
         requestBatterySwitchToRaspberry(batterySwitchRequest);
+    }
+
+    private final RaspberryClient raspberryClient;
+
+    @Transactional
+    public void manualPortBatterySwitch(Long portId, PowerSupplier requestedPowerSupplier){
+        Port port = portService.getPortById(portId);
+
+        portService.updateBatterySwitchOption(portId, BatterySwitchOptionType.OPTION_MANUAL, null);
+        port.setPowerSupplier(requestedPowerSupplier);
+
+        PortAndSupplier portAndSupplier = new PortAndSupplier(portId, requestedPowerSupplier);
+        requestBatterySwitchToRaspberry(new BatterySwitchRequest(List.of(portAndSupplier)));
     }
 
     public void requestBatterySwitchToRaspberry(BatterySwitchRequest batterySwitchRequest) {
@@ -58,6 +72,7 @@ public class PortBatterySwitchService {
 
         updatePowerSupplier(batterySwitchRequest, batterySwitchResponse);
     }
+
 
     private void updatePowerSupplier(BatterySwitchRequest batterySwitchRequest,
                                      BatterySwitchResponse batterySwitchResponse){
@@ -68,7 +83,7 @@ public class PortBatterySwitchService {
 
         portAndSuppliers.stream().forEach(
                 (e)->{
-                    map.put(e.portId(), e.powerSupplier());
+                    map.put(e.portId(), e.powerSupplier().name());
                 }
         );
 

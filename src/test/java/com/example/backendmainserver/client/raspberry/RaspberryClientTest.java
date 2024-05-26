@@ -4,6 +4,7 @@ import com.example.backendmainserver.client.raspberry.dto.request.BatterySwitchR
 import com.example.backendmainserver.client.raspberry.dto.request.PortAndSupplier;
 import com.example.backendmainserver.client.raspberry.dto.response.BatterySwitchResponse;
 import com.example.backendmainserver.client.raspberry.dto.response.PortAndResult;
+import com.example.backendmainserver.port.domain.PowerSupplier;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.Feign;
 import feign.jackson.JacksonDecoder;
@@ -51,7 +52,7 @@ class RaspberryClientTest {
                 .addHeader("Content-Type", "application/json"));
 
         // Create the request object
-        BatterySwitchRequest request = new BatterySwitchRequest(Arrays.asList(new PortAndSupplier(1L, "BATTERY")));
+        BatterySwitchRequest request = new BatterySwitchRequest(Arrays.asList(new PortAndSupplier(1L, PowerSupplier.BATTERY)));
 
         // Execute the client call
         BatterySwitchResponse actualResponse = raspberryClient.requestPortBatterySwitch(request);

@@ -7,7 +7,9 @@ import com.example.backendmainserver.global.response.SuccessResponse;
 import com.example.backendmainserver.port.application.PortBatterySwitchService;
 import com.example.backendmainserver.port.application.PortService;
 import com.example.backendmainserver.port.domain.Port;
+import com.example.backendmainserver.port.domain.PowerSupplier;
 import com.example.backendmainserver.port.presentation.dto.request.PortControlRequest;
+import com.example.backendmainserver.port.presentation.dto.request.PortIdAndState;
 import com.example.backendmainserver.port.presentation.dto.response.PortInfoResponse;
 import com.example.backendmainserver.port.presentation.dto.response.PortInfoResponses;
 import com.example.backendmainserver.user.domain.User;
@@ -18,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,8 +40,8 @@ public class PortController {
             @AdminAuthenticationPrincipal User user,
             @RequestBody PortControlRequest portControlRequest){
 
-        BatterySwitchRequest batterySwitchRequest = convertToBatterySwitchRequest(portControlRequest);
-        portBatterySwitchService.requestBatterySwitchToRaspberry(batterySwitchRequest);
+        portBatterySwitchService.manualPortBatterySwitch(portControlRequest.portIdAndState().portId(),
+                portControlRequest.portIdAndState().state());
 
         return SuccessResponse.of(HttpStatus.OK);
     }
@@ -72,10 +75,9 @@ public class PortController {
     }
 
     public BatterySwitchRequest convertToBatterySwitchRequest(PortControlRequest portControlRequest) {
-        List<PortAndSupplier> portAndSuppliers = portControlRequest.portIdAndStates().stream()
-                .map(portIdAndState -> new PortAndSupplier(portIdAndState.portId(), portIdAndState.state()))
-                .collect(Collectors.toList());
+        PortIdAndState portIdAndState = portControlRequest.portIdAndState();
 
-        return new BatterySwitchRequest(portAndSuppliers);
+        PortAndSupplier portAndSupplier = new PortAndSupplier(portIdAndState.portId(), portIdAndState.state());
+        return new BatterySwitchRequest(List.of(portAndSupplier));
     }
 }

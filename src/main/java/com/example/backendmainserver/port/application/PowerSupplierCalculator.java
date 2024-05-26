@@ -26,7 +26,6 @@ public class PowerSupplierCalculator {
     //포트에 지정된 OptionType이 Manual일 경우 현재 자동 스위칭은 비활성화 되므로, 현재의 powerSupplier를 그대로 반환
     public PowerSupplier calculatePowerSupplier(final Long portId, final Double powerUsage, final PowerSupplier currentPowerSupplier) {
         Port port = portService.getPortById(portId);
-        port.validateBatterySwitchOption();
         BatterySwitchOption batterySwitchOption = port.getBatterySwitchOption();
 
         BatterySwitchOptionType batterySwitchOptionType = batterySwitchOption.getBatterySwitchOptionType();
