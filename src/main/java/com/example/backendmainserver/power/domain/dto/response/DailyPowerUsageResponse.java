@@ -5,8 +5,10 @@ import lombok.Builder;
 import java.util.List;
 
 @Builder
-public class DailyPowerUsageResponse {
-    private List<Double> powerUsageDataList;
-    private Double powerUsage;
-    private Double powerSupplierRatio;
+public record DailyPowerUsageResponse (
+     List<Double> powerUsageDataList,
+     Double powerUsage,
+     Double powerSupplierRatio
+) {
+
 }

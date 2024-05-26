@@ -31,7 +31,6 @@ public class Power {
     @Column
     private String powerSupplier;
 
-    //추후 Port 객체로 바뀌어야함
     @Column
     private Long portId;
 

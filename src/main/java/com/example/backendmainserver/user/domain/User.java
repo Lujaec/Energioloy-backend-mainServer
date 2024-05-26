@@ -1,5 +1,6 @@
 package com.example.backendmainserver.user.domain;
 
+import com.example.backendmainserver.room.domain.Room;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -26,5 +27,11 @@ public class User {
 
     private String phoneNumber;
 
+    @Builder.Default
+    @Enumerated(EnumType.STRING)
+    private Role role = Role.USER;
 
+    @OneToOne
+    @JoinColumn(name = "room_id")
+    private Room room;
 }
