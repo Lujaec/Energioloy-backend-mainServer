@@ -47,7 +47,7 @@ class PowerSupplierCalculatorTest {
         when(portService.getPortById(portId)).thenReturn(port);
 
         // When
-        PowerSupplier powerSupplier = powerSupplierCalculator.calculatePowerSupplier(portId, powerUsage);
+        PowerSupplier powerSupplier = powerSupplierCalculator.calculatePowerSupplier(portId, powerUsage, PowerSupplier.EXTERNAL);
 
         // Then
         assertEquals(PowerSupplier.BATTERY, powerSupplier);
@@ -69,7 +69,7 @@ class PowerSupplierCalculatorTest {
         when(powerService.getPredictionPowerUsage(eq(portId), any(LocalDateTime.class))).thenReturn(120.0);
 
         // When
-        PowerSupplier powerSupplier = powerSupplierCalculator.calculatePowerSupplier(portId, powerUsage);
+        PowerSupplier powerSupplier = powerSupplierCalculator.calculatePowerSupplier(portId, powerUsage, PowerSupplier.EXTERNAL);
 
         // Then
         assertEquals(PowerSupplier.BATTERY, powerSupplier);

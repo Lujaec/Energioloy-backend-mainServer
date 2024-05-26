@@ -38,13 +38,41 @@ public class Port {
         this.powerSupplier = powerSupplier;
     }
 
-    public void validateBatterySwitchOption(){
-        BatterySwitchOptionType batterySwitchOptionType = batterySwitchOption.getBatterySwitchOptionType();
+    public void validateBatterySwitchOptionType(BatterySwitchOptionType batterySwitchOptionType){
+        batterySwitchOptionType = batterySwitchOption.getBatterySwitchOptionType();
 
         if (!(batterySwitchOptionType.equals(BatterySwitchOptionType.OPTION_TIME) ||
-                batterySwitchOptionType.equals(BatterySwitchOptionType.OPTION_PREDICTION))){
+                batterySwitchOptionType.equals(BatterySwitchOptionType.OPTION_PREDICTION) ||
+                batterySwitchOptionType.equals(BatterySwitchOptionType.OPTION_MANUAL))){
             throw new IllegalArgumentException("유효하지 않은 배터리 스위치 타입입니다.");
         }
     }
 
+    public void validateBatterySwitchOption(BatterySwitchOption batterySwitchOption){
+        BatterySwitchOptionType batterySwitchOptionType = batterySwitchOption.getBatterySwitchOptionType();
+
+        validateBatterySwitchOptionType(batterySwitchOptionType);
+
+        if(batterySwitchOptionType.equals(BatterySwitchOptionType.OPTION_TIME)){
+            if(!isValidFormat(batterySwitchOption.optionConfiguration))
+                throw new IllegalArgumentException("올바르지 않은 설정형식입니다.");
+        } else if(batterySwitchOptionType.equals(BatterySwitchOptionType.OPTION_PREDICTION)){
+            int num = Integer.parseInt(batterySwitchOption.getOptionConfiguration());
+
+            if(!(0 <= num && num <= 100))
+                throw new IllegalArgumentException("숫자의 설정 범위가 올바르지 않습니다 num = " + num );
+        }
+    }
+
+    private boolean isValidFormat(String input) {
+        String pattern = "^LOW-(EXTERNAL|BATTERY),MEDIUM-(EXTERNAL|BATTERY),HIGH-(EXTERNAL|BATTERY)$";
+        return input.matches(pattern);
+    }
+
+    public void updateBatterSwitchOption(BatterySwitchOption batterySwitchOption){
+        BatterySwitchOptionType batterySwitchOptionType = batterySwitchOption.getBatterySwitchOptionType();
+        validateBatterySwitchOptionType(batterySwitchOptionType);
+        validateBatterySwitchOption(batterySwitchOption);
+        this.batterySwitchOption = batterySwitchOption;
+    }
 }

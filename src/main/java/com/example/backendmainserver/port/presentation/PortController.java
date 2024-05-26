@@ -6,8 +6,12 @@ import com.example.backendmainserver.client.raspberry.dto.request.PortAndSupplie
 import com.example.backendmainserver.global.response.SuccessResponse;
 import com.example.backendmainserver.port.application.PortBatterySwitchService;
 import com.example.backendmainserver.port.application.PortService;
+import com.example.backendmainserver.port.domain.BatterySwitchOption;
 import com.example.backendmainserver.port.domain.Port;
+import com.example.backendmainserver.port.domain.PowerSupplier;
+import com.example.backendmainserver.port.presentation.dto.request.AutoSwitchConfigUpdateRequest;
 import com.example.backendmainserver.port.presentation.dto.request.PortControlRequest;
+import com.example.backendmainserver.port.presentation.dto.request.PortIdAndState;
 import com.example.backendmainserver.port.presentation.dto.response.PortInfoResponse;
 import com.example.backendmainserver.port.presentation.dto.response.PortInfoResponses;
 import com.example.backendmainserver.user.domain.User;
@@ -18,6 +22,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,9 +42,22 @@ public class PortController {
             @AdminAuthenticationPrincipal User user,
             @RequestBody PortControlRequest portControlRequest){
 
-        BatterySwitchRequest batterySwitchRequest = convertToBatterySwitchRequest(portControlRequest);
-        portBatterySwitchService.requestBatterySwitchToRaspberry(batterySwitchRequest);
+        portBatterySwitchService.manualPortBatterySwitch(portControlRequest.portId(),
+                portControlRequest.state());
 
+        return SuccessResponse.of(HttpStatus.OK);
+    }
+
+    @PatchMapping("/auto-switch")
+    @Operation(summary = "포트 자동 제어 설정 변경 api", description =
+            "포트 단위로 자동 제어 설정을 변경합니다.\n" +
+                    "batterySwitchOptionType: OPTION_PREDICTION or OPTION_TIME\n" +
+                    "optionConfiguration: 숫자 or LOW-전력공급원,MEDIUM-전력공급원,HIGH-전력공급원  ex: LOW-EXTERNAL,MEDIUM-EXTERNAL,HIGH-BATTERY")
+    public ResponseEntity<SuccessResponse<HttpStatus>> updateAutoSwitchConfig(
+            @AdminAuthenticationPrincipal User user,
+            @RequestBody AutoSwitchConfigUpdateRequest request){
+
+        portBatterySwitchService.updateAutoSwitchConfig(request.portId(), request.batterySwitchOption());
         return SuccessResponse.of(HttpStatus.OK);
     }
 
@@ -48,12 +66,8 @@ public class PortController {
     public ResponseEntity<SuccessResponse<PortInfoResponses>> getAllPort(
             @AdminAuthenticationPrincipal User user
             ){
-
         List<Port> ports = portService.getAllPorts();
-
         List<PortInfoResponse> portInfoResponseList = convertToPortInfoResponseList(ports);
-
-
         return SuccessResponse.of(new PortInfoResponses(portInfoResponseList));
     }
 
@@ -71,11 +85,5 @@ public class PortController {
         return list;
     }
 
-    public BatterySwitchRequest convertToBatterySwitchRequest(PortControlRequest portControlRequest) {
-        List<PortAndSupplier> portAndSuppliers = portControlRequest.portIdAndStates().stream()
-                .map(portIdAndState -> new PortAndSupplier(portIdAndState.portId(), portIdAndState.state()))
-                .collect(Collectors.toList());
 
-        return new BatterySwitchRequest(portAndSuppliers);
-    }
 }

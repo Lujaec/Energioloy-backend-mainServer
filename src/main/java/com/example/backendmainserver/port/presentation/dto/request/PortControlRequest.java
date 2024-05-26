@@ -1,6 +1,7 @@
 package com.example.backendmainserver.port.presentation.dto.request;
 
-import java.util.List;
+import com.example.backendmainserver.port.domain.PowerSupplier;
 
-public record PortControlRequest(List<PortIdAndState> portIdAndStates) {
+
+public record PortControlRequest(Long portId, PowerSupplier state) {
 }

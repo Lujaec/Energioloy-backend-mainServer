@@ -61,14 +61,17 @@ public class PortBatterySwitchServiceTest {
         powerUsageAllPorts.put(3L, 200.0);
 
         when(powerService.getPowerUsageAllPorts(any(LocalDateTime.class))).thenReturn(powerUsageAllPorts);
-        when(powerSupplierCalculator.calculatePowerSupplier(1L, 100.0)).thenReturn(PowerSupplier.BATTERY);
-        when(powerSupplierCalculator.calculatePowerSupplier(2L, 200.0)).thenReturn(PowerSupplier.BATTERY);
-        when(powerSupplierCalculator.calculatePowerSupplier(3L, 200.0)).thenReturn(PowerSupplier.BATTERY);
+        when(powerSupplierCalculator.calculatePowerSupplier(1L, 100.0, PowerSupplier.BATTERY)).thenReturn(PowerSupplier.BATTERY);
+
+        when(powerSupplierCalculator.calculatePowerSupplier(2L, 200.0, PowerSupplier.EXTERNAL)).thenReturn(PowerSupplier.BATTERY);
+
+        when(powerSupplierCalculator.calculatePowerSupplier(3L, 200.0, PowerSupplier.EXTERNAL)).thenReturn(PowerSupplier.BATTERY);
+
         when(raspberryClient.requestPortBatterySwitch(any(BatterySwitchRequest.class))).thenReturn(mockResponse);
 
 
         // Then
-        portBatterySwitchService.requestPortBatterySwitch();
+        portBatterySwitchService.autoPortBatterySwitch();
 
         // Verify if the request to switch the battery includes the right ports
         ArgumentCaptor<BatterySwitchRequest> batterySwitchRequestArgumentCaptor = ArgumentCaptor.forClass(BatterySwitchRequest.class);
@@ -79,9 +82,9 @@ public class PortBatterySwitchServiceTest {
         assertEquals(2, portAndSuppliers.size());
 
         assertEquals(2L, portAndSuppliers.get(0).portId());
-        assertEquals("BATTERY", portAndSuppliers.get(0).powerSupplier());
+        assertEquals("BATTERY", portAndSuppliers.get(0).powerSupplier().getName());
 
         assertEquals(3L, portAndSuppliers.get(1).portId());
-        assertEquals("BATTERY", portAndSuppliers.get(0).powerSupplier());
+        assertEquals("BATTERY", portAndSuppliers.get(0).powerSupplier().getName());
     }
 }

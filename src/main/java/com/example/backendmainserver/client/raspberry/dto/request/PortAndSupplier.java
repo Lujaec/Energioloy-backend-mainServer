@@ -1,5 +1,7 @@
 package com.example.backendmainserver.client.raspberry.dto.request;
 
 
-public record PortAndSupplier(Long portId, String powerSupplier) {
+import com.example.backendmainserver.port.domain.PowerSupplier;
+
+public record PortAndSupplier(Long portId, PowerSupplier powerSupplier) {
 }

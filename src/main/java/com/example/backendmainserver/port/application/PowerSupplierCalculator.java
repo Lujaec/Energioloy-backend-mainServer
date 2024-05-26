@@ -23,9 +23,9 @@ public class PowerSupplierCalculator {
     private final LocalDateTimeService localDateTimeService;
 
     //현재 시점에 적합한 PowerSupplier를 계산
-    public PowerSupplier calculatePowerSupplier(final Long portId, final Double powerUsage) {
+    //포트에 지정된 OptionType이 Manual일 경우 현재 자동 스위칭은 비활성화 되므로, 현재의 powerSupplier를 그대로 반환
+    public PowerSupplier calculatePowerSupplier(final Long portId, final Double powerUsage, final PowerSupplier currentPowerSupplier) {
         Port port = portService.getPortById(portId);
-        port.validateBatterySwitchOption();
         BatterySwitchOption batterySwitchOption = port.getBatterySwitchOption();
 
         BatterySwitchOptionType batterySwitchOptionType = batterySwitchOption.getBatterySwitchOptionType();
@@ -51,9 +51,11 @@ public class PowerSupplierCalculator {
                 return PowerSupplier.BATTERY;
             else
                 return PowerSupplier.EXTERNAL;
-        } else {
+        } else if(batterySwitchOptionType.equals(BatterySwitchOptionType.OPTION_MANUAL)){
+            return currentPowerSupplier;
+        } else{
             log.error("유효하지 않은 배터리 스위치 옵션입니다. Current Option: {}",batterySwitchOptionType.toString());
-            return PowerSupplier.EXTERNAL;
+            return currentPowerSupplier;
         }
     }
 
