@@ -53,6 +53,7 @@ public class PowerService {
             existingPower.setPowerSupplier(powerSupplier);
             existingPower.setPowerCost(totalPower * 20); //임의의 가중치 20
             powerRepository.save(existingPower);
+
         }
 
         powerDataService.deleteDataBeforeTime(convertedNow);
