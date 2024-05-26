@@ -6,6 +6,7 @@ import com.example.backendmainserver.client.raspberry.dto.request.PortAndSupplie
 import com.example.backendmainserver.client.raspberry.dto.response.BatterySwitchResponse;
 import com.example.backendmainserver.client.raspberry.dto.response.PortAndResult;
 import com.example.backendmainserver.global.application.LocalDateTimeService;
+import com.example.backendmainserver.port.domain.BatterySwitchOption;
 import com.example.backendmainserver.port.domain.BatterySwitchOptionType;
 import com.example.backendmainserver.port.domain.Port;
 import com.example.backendmainserver.port.domain.PowerSupplier;
@@ -96,5 +97,11 @@ public class PortBatterySwitchService {
                 portService.updatePowerSupplier(portId, PowerSupplier.valueOf(nextSupplier));
             }
         }
+    }
+
+    public void updateAutoSwitchConfig(Long portId, BatterySwitchOption batterySwitchOption){
+        portService.updateBatterySwitchOption(portId,
+                batterySwitchOption.getBatterySwitchOptionType(),
+                batterySwitchOption.getOptionConfiguration());
     }
 }

@@ -50,6 +50,4 @@ public class PortService {
         BatterySwitchOption batterySwitchOption = new BatterySwitchOption(batterySwitchOptionType, optionConfiguration);
         port.updateBatterSwitchOption(batterySwitchOption);
     }
-
-
 }
