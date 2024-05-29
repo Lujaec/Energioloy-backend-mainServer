@@ -5,15 +5,13 @@ import com.example.backendmainserver.client.raspberry.dto.request.BatterySwitchR
 import com.example.backendmainserver.client.raspberry.dto.request.PortAndSupplier;
 import com.example.backendmainserver.client.raspberry.dto.response.BatterySwitchResponse;
 import com.example.backendmainserver.client.raspberry.dto.response.PortAndResult;
+import com.example.backendmainserver.event.domain.PowerSupplierChangedEvent;
 import com.example.backendmainserver.global.application.LocalDateTimeService;
-import com.example.backendmainserver.port.domain.BatterySwitchOption;
-import com.example.backendmainserver.port.domain.BatterySwitchOptionType;
-import com.example.backendmainserver.port.domain.Port;
-import com.example.backendmainserver.port.domain.PowerSupplier;
-import com.example.backendmainserver.port.presentation.dto.request.PortIdAndState;
+import com.example.backendmainserver.port.domain.*;
 import com.example.backendmainserver.power.application.PowerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +30,9 @@ public class PortBatterySwitchService {
     private final PortService portService;
     private final PowerService powerService;
     private final LocalDateTimeService localDateTimeService;
+    private final ApplicationEventPublisher eventPublisher;
+    private final RaspberryClient raspberryClient;
+
     @Scheduled(cron = "5 * * * * ?")
     public void autoPortBatterySwitch(){
         List<Port> ports = portService.getAllPorts();
@@ -46,22 +47,55 @@ public class PortBatterySwitchService {
             PowerSupplier calculatedPowerSupplier = powerSupplierCalculator.
                     calculatePowerSupplier(portId, powerUsageAllPorts.get(portId), currentPowerSupplier);
 
-            if(!currentPowerSupplier.equals(calculatedPowerSupplier))
+            if(!currentPowerSupplier.equals(calculatedPowerSupplier)) {
                 portAndSupplierList.add(new PortAndSupplier(portId, calculatedPowerSupplier));
+                eventPublisher.publishEvent(new PowerSupplierChangedEvent(this,
+                        port,
+                        currentPowerSupplier,
+                        calculatedPowerSupplier,
+                        createAutoSwitchMessage(port, calculatedPowerSupplier)
+                ));
+            }
         }
 
         BatterySwitchRequest batterySwitchRequest = new BatterySwitchRequest(portAndSupplierList);
         requestBatterySwitchToRaspberry(batterySwitchRequest);
     }
 
-    private final RaspberryClient raspberryClient;
+    private String createAutoSwitchMessage(Port port, PowerSupplier calculatedPowerSupplier){
+        String message = "자동제어: ";
+        BatterySwitchOption batterySwitchOption = port.getBatterySwitchOption();
+        String powerSupplierKr = calculatedPowerSupplier.getNameKr();
+
+        if(batterySwitchOption.equals(BatterySwitchOptionType.OPTION_TIME)){
+            String loadLevelKr = powerSupplierCalculator.determineCurrentLoadLevel().getKrName();
+
+            message += loadLevelKr + "시 " + powerSupplierKr;
+        }else if (batterySwitchOption.equals(BatterySwitchOptionType.OPTION_PREDICTION)){
+            if (calculatedPowerSupplier.equals(PowerSupplier.EXTERNAL)){
+                message += "예측 사용량 일정 비율 이상 시" + powerSupplierKr;
+            }else
+                message += "예측 사용량 일정 비율 미만 시" + powerSupplierKr;
+        }
+
+        return message;
+    }
+
 
     @Transactional
     public void manualPortBatterySwitch(Long portId, PowerSupplier requestedPowerSupplier){
         Port port = portService.getPortById(portId);
+        PowerSupplier beforePowerSupplier = port.getPowerSupplier();
 
         portService.updateBatterySwitchOption(portId, BatterySwitchOptionType.OPTION_MANUAL, null);
         port.setPowerSupplier(requestedPowerSupplier);
+
+        eventPublisher.publishEvent(new PowerSupplierChangedEvent(this,
+                port,
+                beforePowerSupplier,
+                requestedPowerSupplier,
+                "수동제어"
+                ));
 
         PortAndSupplier portAndSupplier = new PortAndSupplier(portId, requestedPowerSupplier);
         requestBatterySwitchToRaspberry(new BatterySwitchRequest(List.of(portAndSupplier)));
