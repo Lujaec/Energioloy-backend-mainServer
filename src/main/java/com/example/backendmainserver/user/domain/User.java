@@ -34,4 +34,10 @@ public class User {
     @OneToOne
     @JoinColumn(name = "room_id")
     private Room room;
+
+    private String fcmToken;
+
+    public void updateFcmToken(String fcmToken){
+        this.fcmToken = fcmToken;
+    }
 }
