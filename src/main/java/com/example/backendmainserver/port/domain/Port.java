@@ -65,7 +65,7 @@ public class Port {
     }
 
     private boolean isValidFormat(String input) {
-        String pattern = "^LOW-(EXTERNAL|BATTERY),MEDIUM-(EXTERNAL|BATTERY),HIGH-(EXTERNAL|BATTERY)$";
+        String pattern = "^LOW-(EXTERNAL|BATTERY|OFF),MEDIUM-(EXTERNAL|BATTERY|OFF),HIGH-(EXTERNAL|BATTERY|OFF)$";
         return input.matches(pattern);
     }
 
