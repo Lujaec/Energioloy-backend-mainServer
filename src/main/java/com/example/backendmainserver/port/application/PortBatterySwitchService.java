@@ -64,14 +64,14 @@ public class PortBatterySwitchService {
 
     private String createAutoSwitchMessage(Port port, PowerSupplier calculatedPowerSupplier){
         String message = "자동제어: ";
-        BatterySwitchOption batterySwitchOption = port.getBatterySwitchOption();
+        BatterySwitchOptionType switchOptionType = port.getBatterySwitchOption().getBatterySwitchOptionType();
         String powerSupplierKr = calculatedPowerSupplier.getNameKr();
 
-        if(batterySwitchOption.equals(BatterySwitchOptionType.OPTION_TIME)){
+        if(switchOptionType.equals(BatterySwitchOptionType.OPTION_TIME)){
             String loadLevelKr = powerSupplierCalculator.determineCurrentLoadLevel().getKrName();
 
             message += loadLevelKr + "시 " + powerSupplierKr;
-        }else if (batterySwitchOption.equals(BatterySwitchOptionType.OPTION_PREDICTION)){
+        }else if (switchOptionType.equals(BatterySwitchOptionType.OPTION_PREDICTION)){
             if (calculatedPowerSupplier.equals(PowerSupplier.EXTERNAL)){
                 message += "예측 사용량 일정 비율 이상 시" + powerSupplierKr;
             }else

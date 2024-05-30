@@ -1,5 +1,6 @@
 package com.example.backendmainserver.history.domain;
 
+import com.example.backendmainserver.global.BaseEntity;
 import com.example.backendmainserver.port.domain.Port;
 import com.example.backendmainserver.port.domain.PowerSupplier;
 import jakarta.persistence.*;
@@ -12,7 +13,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @NoArgsConstructor
-public class PowerSupplierHistory {
+public class PowerSupplierHistory extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

@@ -1,6 +1,7 @@
 package com.example.backendmainserver.history.presentation;
 
 
+import com.example.backendmainserver.auth.presentation.AdminAuthenticationPrincipal;
 import com.example.backendmainserver.auth.presentation.AuthenticationPrincipal;
 import com.example.backendmainserver.global.response.SuccessResponse;
 import com.example.backendmainserver.history.application.PowerSupplierHistoryService;
@@ -25,11 +26,18 @@ import java.util.List;
 public class PowerSupplierHistoryController {
     private final PowerSupplierHistoryService powerSupplierHistoryService;
 
-    @GetMapping("")
+    @GetMapping("/room")
     public ResponseEntity<SuccessResponse<PowerSupplierHistoryResponses>> getHistoryByRoomId(@AuthenticationPrincipal User user){
         Long roomId = user.getRoom().getId();
         List<PowerSupplierHistory> powerSupplierHistoryList = powerSupplierHistoryService.getHistoriesByRoomId(roomId);
 
+        PowerSupplierHistoryResponses responses = convertToResponses(powerSupplierHistoryList);
+        return SuccessResponse.of(responses);
+    }
+
+    @GetMapping("")
+    public ResponseEntity<SuccessResponse<PowerSupplierHistoryResponses>> getHistoryAll(@AdminAuthenticationPrincipal User user){
+        List<PowerSupplierHistory> powerSupplierHistoryList = powerSupplierHistoryService.getAllHistories();
         PowerSupplierHistoryResponses responses = convertToResponses(powerSupplierHistoryList);
         return SuccessResponse.of(responses);
     }
