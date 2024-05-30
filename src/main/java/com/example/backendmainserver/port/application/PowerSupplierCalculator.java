@@ -59,7 +59,7 @@ public class PowerSupplierCalculator {
         }
     }
 
-    private LoadLevel determineCurrentLoadLevel(){
+    public LoadLevel determineCurrentLoadLevel(){
         LocalTime now = LocalTime.now();
         MonthDay today = MonthDay.now();
 
