@@ -6,6 +6,7 @@ import com.example.backendmainserver.PowerData.domain.PowerDataList;
 import com.example.backendmainserver.global.application.LocalDateTimeService;
 import com.example.backendmainserver.port.application.PortService;
 import com.example.backendmainserver.port.domain.Port;
+import com.example.backendmainserver.port.domain.PowerSupplier;
 import com.example.backendmainserver.power.domain.Power;
 import com.example.backendmainserver.power.domain.PowerRepository;
 import com.example.backendmainserver.power.domain.dto.response.DailyPowerPredictionResponse;
@@ -44,7 +45,7 @@ public class PowerService {
 
             double totalPower = calTotalPower(powerDataL, convertedNow);
             Long portId = i;
-            String powerSupplier = calPowerSupplier(powerDataL);
+            String powerSupplier = calPowerSupplier(i);
 
             Power existingPower = powerRepository.findByPortIdAndTime(portId, convertedNow)
                     .orElseThrow(() -> new IllegalStateException("portId와 시간으로 Power row를 찾을 수없습니다"));
@@ -77,25 +78,9 @@ public class PowerService {
         return total;
     }
 
-    private String calPowerSupplier(List<PowerData> powerDataL){
-        Map<String, Integer> supplierCnt = new HashMap<>();
-
-        for (PowerData powerData : powerDataL) {
-            String supplier = powerData.getPowerSupplier();
-            supplierCnt.put(supplier, supplierCnt.getOrDefault(supplier, 0) + 1);
-        }
-
-        String mostCommonSupplier = "external"; //기본값!
-        int maxCount = 0;
-
-        for (Map.Entry<String, Integer> entry : supplierCnt.entrySet()) {
-            if (entry.getValue() > maxCount) {
-                mostCommonSupplier = entry.getKey();
-                maxCount = entry.getValue();
-            }
-        }
-
-        return mostCommonSupplier;
+    private String calPowerSupplier(Long portId){
+        Port port = portService.getPortById(portId);
+        return port.getPowerSupplier().getName();
     }
 
     @Transactional
@@ -158,7 +143,7 @@ public class PowerService {
     /**
      * 오늘 전력 사용량, 예측량 데이터 조회 로직
      * @return
-     */
+     * */
     public DailyPowerUsageResponse getDailyPowerUsageWithAllRoom() {
         List<Power> currentDailyPower = powerRepository.findTodayPower();
         List<Double> todayPowerUsageAllRoom = powerRepository.findTodayPowerUsageAllRoom();
@@ -169,13 +154,14 @@ public class PowerService {
         int externalCount = 0;
 
         for (Power power : currentDailyPower) {
+
             if (power.getPowerUsage() != null) {
                 sumPowerUsage += power.getPowerUsage();
             }
             if (power.getPowerSupplier() != null) {
-                if (power.getPowerSupplier().equals("battery")) {
+                if (power.getPowerSupplier().equals(PowerSupplier.BATTERY.getName())) {
                     batteryCount += 1;
-                } else if (power.getPowerSupplier().equals("external")) {
+                } else if (power.getPowerSupplier().equals(PowerSupplier.EXTERNAL.getName())) {
                     externalCount += 1;
                 }
             }
@@ -308,9 +294,9 @@ public class PowerService {
                 sumPowerUsage += power.getPowerUsage();
             }
             if (power.getPowerSupplier() != null) {
-                if (power.getPowerSupplier().equals("battery")) {
+                if (power.getPowerSupplier().equals(PowerSupplier.BATTERY.getName())) {
                     batteryCount += 1;
-                } else if (power.getPowerSupplier().equals("external")) {
+                } else if (power.getPowerSupplier().equals(PowerSupplier.EXTERNAL.getName())) {
                     externalCount += 1;
                 }
 
