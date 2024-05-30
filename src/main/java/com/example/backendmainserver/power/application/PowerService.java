@@ -161,7 +161,7 @@ public class PowerService {
      */
     public DailyPowerUsageResponse getDailyPowerUsageWithAllRoom() {
         List<Power> currentDailyPower = powerRepository.findTodayPower();
-        List<Double> powerUsageList = new ArrayList<>() ;
+        List<Double> todayPowerUsageAllRoom = powerRepository.findTodayPowerUsageAllRoom();
 
         double sumPowerUsage = 0.0;
         double externalRatio = 100.0;
@@ -169,7 +169,6 @@ public class PowerService {
         int externalCount = 0;
 
         for (Power power : currentDailyPower) {
-            powerUsageList.add(power.getPowerUsage());
             if (power.getPowerUsage() != null) {
                 sumPowerUsage += power.getPowerUsage();
             }
@@ -179,7 +178,6 @@ public class PowerService {
                 } else if (power.getPowerSupplier().equals("external")) {
                     externalCount += 1;
                 }
-
             }
         }
         if( batteryCount + externalCount !=0){
@@ -188,7 +186,7 @@ public class PowerService {
 
         return DailyPowerUsageResponse.builder()
                 .powerUsage(sumPowerUsage)
-                .powerUsageDataList(powerUsageList)
+                .powerUsageDataList(todayPowerUsageAllRoom)
                 .powerSupplierRatio(externalRatio)
                 .build();
     }
@@ -199,13 +197,13 @@ public class PowerService {
      */
     public DailyPowerPredictionResponse getDailyPowerPredictionWithAllRoom() {
         List<Power> currentDailyPower = powerRepository.findTodayPower();
-        List<Double> powerPredictionList = new ArrayList<>();
+        List<Double> todayPowerPredictionAllRoom = powerRepository.findTodayPowerPredictionAllRoom();
+//        List<Double> powerPredictionList = new ArrayList<>();
 
 
         double sumPowerPredictionUsage= 0.0;
 
         for (Power power : currentDailyPower) {
-            powerPredictionList.add(power.getPowerPredictionUsage());
             if (power.getPowerPredictionUsage() != null) {
                 sumPowerPredictionUsage += power.getPowerPredictionUsage();
             }
@@ -213,7 +211,7 @@ public class PowerService {
 
         return DailyPowerPredictionResponse.builder()
                 .powerPredictionUsage(sumPowerPredictionUsage)
-                .powerPredictionDataList(powerPredictionList)
+                .powerPredictionDataList(todayPowerPredictionAllRoom)
                 .build();
     }
 
