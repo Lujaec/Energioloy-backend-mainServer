@@ -74,7 +74,7 @@ public class PowerService {
         if(cnt == 0)
             return 0;
 
-           total = total / cnt * 60;
+           total = total / cnt * 60 / 1000.0;
         return total;
     }
 
@@ -109,6 +109,9 @@ public class PowerService {
 
         }
 
+        sumPowerCost /= 60.0;
+        sumPowerUsage /= 60.0;
+
         return MonthlyPowerUsageResponse.builder()
                 .powerCost(sumPowerCost)
                 .powerUsage(sumPowerUsage)
@@ -133,6 +136,9 @@ public class PowerService {
                 sumPowerPredictionCost += power.getPowerPredictionCost();
             }
         }
+
+        sumPowerPredictionUsage /= 60.0;
+        sumPowerPredictionCost /= 60.0;
 
         return MonthlyPowerPredictionResponse.builder()
                 .powerPredictionUsage(sumPowerPredictionUsage)
@@ -170,6 +176,10 @@ public class PowerService {
             externalRatio = (double) externalCount / (batteryCount + externalCount) * 100;
         }
 
+
+        sumPowerUsage /= 60.0;
+
+
         return DailyPowerUsageResponse.builder()
                 .powerUsage(sumPowerUsage)
                 .powerUsageDataList(todayPowerUsageAllRoom)
@@ -194,6 +204,8 @@ public class PowerService {
                 sumPowerPredictionUsage += power.getPowerPredictionUsage();
             }
         }
+
+        sumPowerPredictionUsage /= 60.0;
 
         return DailyPowerPredictionResponse.builder()
                 .powerPredictionUsage(sumPowerPredictionUsage)
@@ -228,6 +240,9 @@ public class PowerService {
 
         }
 
+        sumPowerCost /= 60.0;
+        sumPowerUsage /= 60.0;
+
         return MonthlyPowerUsageResponse.builder()
                 .powerCost(sumPowerCost)
                 .powerUsage(sumPowerUsage)
@@ -258,6 +273,9 @@ public class PowerService {
                 sumPowerPredictionCost += power.getPowerPredictionCost();
             }
         }
+
+        sumPowerPredictionUsage /= 60.0;
+        sumPowerPredictionCost /= 60.0;
 
         return MonthlyPowerPredictionResponse.builder()
                 .powerPredictionUsage(sumPowerPredictionUsage)
@@ -302,6 +320,8 @@ public class PowerService {
             externalRatio = (double) externalCount / (batteryCount + externalCount) * 100;
         }
 
+        sumPowerUsage /= 60.0;
+
         return DailyPowerUsageResponse.builder()
                 .powerUsage(sumPowerUsage)
                 .powerUsageDataList(powerUsageList)
@@ -332,6 +352,8 @@ public class PowerService {
                 sumPowerPredictionUsage += power.getPowerPredictionUsage();
             }
         }
+
+        sumPowerPredictionUsage /= 60.0;
 
         return DailyPowerPredictionResponse.builder()
                 .powerPredictionUsage(sumPowerPredictionUsage)

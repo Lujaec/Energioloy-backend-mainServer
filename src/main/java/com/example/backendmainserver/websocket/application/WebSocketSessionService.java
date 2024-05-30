@@ -2,6 +2,8 @@ package com.example.backendmainserver.websocket.application;
 
 import com.example.backendmainserver.PowerData.domain.PowerData;
 import com.example.backendmainserver.PowerData.domain.PowerDataList;
+import com.example.backendmainserver.port.application.PortService;
+import com.example.backendmainserver.port.domain.Port;
 import com.example.backendmainserver.user.application.UserService;
 import com.example.backendmainserver.user.domain.Role;
 import com.example.backendmainserver.user.domain.User;
@@ -16,10 +18,7 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -27,6 +26,7 @@ import java.util.Set;
 public class WebSocketSessionService {
     private final InMemoryWebSocketSessionRepository webSocketSessionRepository;
     private final UserService userService;
+    private final PortService portService;
 
     public void save(WebSocketSession session, Long userId){
         User user = userService.getUser(userId);
@@ -44,6 +44,7 @@ public class WebSocketSessionService {
     public void sendPowerData(PowerDataList data) throws IOException {
         Set<Map.Entry<WebSocketSession, UserVO>> entrySet = webSocketSessionRepository.getEntrySet();
         List<PowerData> powerDataList = data.getPowerDataList();
+        setPowerSupplierToPowerDataList(powerDataList);
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
 
@@ -59,6 +60,7 @@ public class WebSocketSessionService {
                 Long portId = powerData.getPortId();
 
                 if (userVO.getRole().equals(Role.ADMIN) || userPortsId.contains(portId)) {
+
                     sendPowerDataList.add(powerData);
                 }
             }
@@ -70,6 +72,19 @@ public class WebSocketSessionService {
                 log.info("Main Server Send Data To User #{} ", userVO.getId());
                 log.info("Data = {}", sendPowerDataList);
             }
+        }
+    }
+
+    private void setPowerSupplierToPowerDataList(List<PowerData> powerDataList){
+        HashMap<Long, String> powerSupplierMap = new HashMap<>();
+        List<Port> allPorts = portService.getAllPorts();
+
+        for (Port port : allPorts) {
+            powerSupplierMap.put(port.getId(), port.getPowerSupplier().getNameKr());
+        }
+
+        for (PowerData powerData : powerDataList) {
+            powerData.setPowerSupplier(powerSupplierMap.get(powerData.getPortId()));
         }
     }
 }
