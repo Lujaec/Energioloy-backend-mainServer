@@ -63,7 +63,8 @@ public class UserService  {
 
         String newAccessToken = jwtProvider.createAccessToken(user.getId());
         String newRefreshToken = jwtProvider.createRefreshToken(user.getId());
-//        log.info("at" + newAccessToken);
+
+        user.updateFcmToken(req.fcmToken());
 
             return LoginResponse.builder()
                     .userId(user.getId())
