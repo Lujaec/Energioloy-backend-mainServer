@@ -36,6 +36,22 @@ public interface PowerRepository extends JpaRepository<Power, Long> {
     @Query("SELECT p FROM Power p WHERE DATE(p.time) = CURRENT_DATE AND p.portId = :portId")
     List<Power> findTodayPowerWithPortId(@Param("portId") Long portId);
 
+    //roomId로 오늘 사용량 조회하는 로직
+    @Query("SELECT sum(p.powerUsage) FROM Power p "   +
+            "JOIN Port port on p.portId = port.id " +
+            "JOIN Room r on port.room.id = r.id" +
+            " WHERE DATE(p.time) = CURRENT_DATE AND r.id = :roomId " +
+            "GROUP BY p.time")
+    List<Double> findTodayPowerWithRoomId(@Param("roomId") Long roomId);
+
+    //roomId로 오늘 예측량 조회하는 로직
+    @Query("SELECT sum(p.powerPredictionUsage) FROM Power p "   +
+            "JOIN Port port on p.portId = port.id " +
+            "JOIN Room r on port.room.id = r.id" +
+            " WHERE DATE(p.time) = CURRENT_DATE AND r.id = :roomId " +
+            "GROUP BY p.time")
+    List<Double> findTodayPowerPredictionWithRoomId(@Param("roomId") Long roomId);
+
     Optional<Power> findByPortIdAndTime(Long portId, LocalDateTime time);
 
     List<Power> findAllByTimeOrderByPortId(LocalDateTime time);

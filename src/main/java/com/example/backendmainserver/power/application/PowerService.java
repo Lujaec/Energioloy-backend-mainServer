@@ -226,9 +226,10 @@ public class PowerService {
             currentMonthPower.addAll(currentMonthPowerWithPortId);
         }
 
+
+
         Double sumPowerUsage = 0.0;
         Double sumPowerCost = 0.0;
-
 
         for (Power power : currentMonthPower){
             if (power.getPowerUsage() != null) {
@@ -291,6 +292,9 @@ public class PowerService {
         List<Double> powerUsageList = new ArrayList<>() ;
         List<Long> portsId = portService.getPortsId(room);
 
+        //방아이디로 조회
+        List<Double> todayPowerWithRoomId = powerRepository.findTodayPowerWithRoomId(room.getId());
+
         List<Power> currentDailyPower = new ArrayList<>();
         for (Long portId : portsId) {
             List<Power> currentMonthPowerWithPortId = powerRepository.findTodayPowerWithPortId(portId);
@@ -324,7 +328,7 @@ public class PowerService {
 
         return DailyPowerUsageResponse.builder()
                 .powerUsage(sumPowerUsage)
-                .powerUsageDataList(powerUsageList)
+                .powerUsageDataList(todayPowerWithRoomId)
                 .powerSupplierRatio(externalRatio)
                 .build();
     }
@@ -337,11 +341,14 @@ public class PowerService {
         List<Double> powerPredictionList = new ArrayList<>();
         List<Long> portsId = portService.getPortsId(room);
         List<Power> currentDailyPower = new ArrayList<>();
+        List<Double> todayPowerPredictionWithRoomId = powerRepository.findTodayPowerPredictionWithRoomId(room.getId());
 
         for (Long portId : portsId) {
             List<Power> currentMonthPowerWithPortId = powerRepository.findTodayPowerWithPortId(portId);
             currentDailyPower.addAll(currentMonthPowerWithPortId);
         }
+
+
 
 
         double sumPowerPredictionUsage= 0.0;
@@ -357,7 +364,7 @@ public class PowerService {
 
         return DailyPowerPredictionResponse.builder()
                 .powerPredictionUsage(sumPowerPredictionUsage)
-                .powerPredictionDataList(powerPredictionList)
+                .powerPredictionDataList(todayPowerPredictionWithRoomId)
                 .build();
     }
 
