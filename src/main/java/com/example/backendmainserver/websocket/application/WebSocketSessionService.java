@@ -67,7 +67,14 @@ public class WebSocketSessionService {
 
             if(!sendPowerDataList.isEmpty()) {
                 String jsonMessage = objectMapper.writeValueAsString(sendPowerDataList);
-                webSocketSession.sendMessage(new TextMessage(jsonMessage));
+
+                try{
+                    synchronized (webSocketSession){
+                        webSocketSession.sendMessage(new TextMessage(jsonMessage));
+                    }
+                }catch (IOException e){
+                    log.error(e.getMessage());
+                }
 
                 log.info("Main Server Send Data To User #{} ", userVO.getId());
                 log.info("Data = {}", sendPowerDataList);
