@@ -1,4 +1,4 @@
-package com.example.backendmainserver.fcm;
+package com.example.backendmainserver.fcm.presentation.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;

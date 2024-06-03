@@ -1,24 +1,13 @@
-package com.example.backendmainserver.fcm;
+package com.example.backendmainserver.fcm.application;
 
-import com.example.backendmainserver.fcm.FcmMessage;
-import com.example.backendmainserver.fcm.MessageDto;
+import com.example.backendmainserver.fcm.presentation.dto.MessageDto;
 import com.example.backendmainserver.global.exception.GlobalException;
 import com.example.backendmainserver.global.response.ErrorCode;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.auth.oauth2.GoogleCredentials;
-import com.google.common.net.HttpHeaders;
 import com.google.firebase.messaging.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import okhttp3.*;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 @Slf4j
 @Service

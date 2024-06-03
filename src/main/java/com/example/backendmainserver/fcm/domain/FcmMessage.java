@@ -1,4 +1,4 @@
-package com.example.backendmainserver.fcm;
+package com.example.backendmainserver.fcm.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

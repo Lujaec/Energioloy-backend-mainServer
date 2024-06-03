@@ -1,5 +1,7 @@
-package com.example.backendmainserver.fcm;
+package com.example.backendmainserver.fcm.presentation;
 
+import com.example.backendmainserver.fcm.presentation.dto.MessageDto;
+import com.example.backendmainserver.fcm.application.FcmService;
 import com.example.backendmainserver.global.response.SuccessResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -12,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
-import java.util.concurrent.ExecutionException;
 
 @Tag(name = "FCM API", description = "FCM 메세지를 보내는 api 컨트롤러")
 @Slf4j
