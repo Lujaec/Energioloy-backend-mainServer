@@ -48,6 +48,12 @@ public class PortController {
         return SuccessResponse.of(HttpStatus.OK);
     }
 
+    @PostMapping("/init/batterySupplier")
+    public ResponseEntity<SuccessResponse<HttpStatus>> initBatterySupplier(){
+        portBatterySwitchService.initAllPortBatterySupplier();
+        return SuccessResponse.of(HttpStatus.OK);
+    }
+
     @PatchMapping("/auto-switch")
     @Operation(summary = "포트 자동 제어 설정 변경 api", description =
             "포트 단위로 자동 제어 설정을 변경합니다.\n" +

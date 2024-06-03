@@ -138,4 +138,13 @@ public class PortBatterySwitchService {
                 batterySwitchOption.getBatterySwitchOptionType(),
                 batterySwitchOption.getOptionConfiguration());
     }
+
+    @Transactional
+    public void initAllPortBatterySupplier(){
+        List<Port> allPorts = portService.getAllPorts();
+
+        for (Port port : allPorts) {
+            port.setPowerSupplier(PowerSupplier.EXTERNAL);
+        }
+    }
 }
