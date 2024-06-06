@@ -392,4 +392,18 @@ public class PowerService {
 
         return map;
     }
+
+    public Map<Long, Double> getPowerPredictionUsageAllPorts(LocalDateTime time){
+        Map<Long, Double> map = new HashMap<>();
+        List<Power> powerList = powerRepository.findAllByTimeOrderByPortId(time);
+
+        for (Power power : powerList) {
+            Long portId = power.getPortId();
+            Double powerUsage = power.getPowerPredictionUsage();
+
+            map.put(portId, powerUsage);
+        }
+
+        return map;
+    }
 }

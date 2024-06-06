@@ -23,6 +23,8 @@ public class UserVO {
 
     private Role role;
 
+    private String fcmToken;
+
     public static UserVO buildUserVO(User user){
         return UserVO.builder()
                 .id(user.getId())
@@ -33,6 +35,7 @@ public class UserVO {
                 .phoneNumber(user.getPhoneNumber())
                 .room(user.getRoom())
                 .role(user.getRole())
+                .fcmToken(user.getFcmToken())
                 .build();
     }
 

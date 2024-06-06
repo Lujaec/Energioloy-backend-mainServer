@@ -2,6 +2,7 @@ package com.example.backendmainserver.websocket.application;
 
 import com.example.backendmainserver.PowerData.domain.PowerData;
 import com.example.backendmainserver.PowerData.domain.PowerDataList;
+import com.example.backendmainserver.event.domain.PowerAlertEvent;
 import com.example.backendmainserver.port.application.PortService;
 import com.example.backendmainserver.port.domain.Port;
 import com.example.backendmainserver.user.application.UserService;
@@ -13,6 +14,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -27,6 +29,7 @@ public class WebSocketSessionService {
     private final InMemoryWebSocketSessionRepository webSocketSessionRepository;
     private final UserService userService;
     private final PortService portService;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     public void save(WebSocketSession session, Long userId){
         User user = userService.getUser(userId);
@@ -60,8 +63,10 @@ public class WebSocketSessionService {
                 Long portId = powerData.getPortId();
 
                 if (userVO.getRole().equals(Role.ADMIN) || userPortsId.contains(portId)) {
+                    Port port = portService.getPortById(portId);
 
                     sendPowerDataList.add(powerData);
+                    publishPowerAlertEvent(port.getRoom().getId(), portId, userVO.getFcmToken(), powerData.getPower());
                 }
             }
 
@@ -93,5 +98,10 @@ public class WebSocketSessionService {
         for (PowerData powerData : powerDataList) {
             powerData.setPowerSupplier(powerSupplierMap.get(powerData.getPortId()));
         }
+    }
+
+    private void publishPowerAlertEvent(Long roomId, Long portId, String fcmToken, Double powerUsage){
+        PowerAlertEvent event = new PowerAlertEvent(this, roomId, portId, fcmToken, powerUsage);
+        applicationEventPublisher.publishEvent(event);
     }
 }
